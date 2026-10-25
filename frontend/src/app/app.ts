@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { Layout } from './components/layout/layout';
-import { NotificationModalComponent } from './components/modal-notificacion/modal-notificacion';
+import { ToastNotificationComponent } from './components/toast-notification/toast-notification';
 
 @Component({
-  imports: [Layout, NotificationModalComponent ],
+  imports: [Layout, ToastNotificationComponent ],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

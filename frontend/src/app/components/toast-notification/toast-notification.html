@@ -1,0 +1,37 @@
+@if (notificacion.state$ | async; as state) {
+    @if (state.show) {
+        <!-- Contenedor fijo superior: ocupa todo el ancho con padding lateral (px-4) para el margen -->
+        <div class="fixed top-4 left-0 w-full z-50 px-4 pointer-events-none flex justify-center">
+
+            <!-- Tarjeta flotante: toma el 100% del contenedor y aplica los bordes redondeados -->
+            <div class="pointer-events-auto relative w-full max-w-md p-4 rounded-xl shadow-xl"
+                 [ngClass]="{
+             'bg-blue-600 text-white': state.type === 'info',
+             'bg-yellow-400 text-orange-800': state.type === 'warning',
+             'bg-red-600 text-white': state.type === 'error'
+           }">
+
+                <!-- Contenedor del texto centrado -->
+                <div class="text-center w-full px-8">
+                    <h3 class="text-sm font-bold uppercase tracking-wide mb-1">
+                        @switch (state.type) {
+                            @case ('info') { <span>Información</span> }
+                            @case ('warning') { <span>Advertencia</span> }
+                            @case ('error') { <span>Error</span> }
+                        }
+                    </h3>
+                    <p class="text-sm font-medium">{{ state.message }}</p>
+                </div>
+
+                <!-- Botón de cierre absoluto alineado a la derecha -->
+                <button (click)="notificacion.close()"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 p-2 opacity-80 hover:opacity-100 focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    }
+}

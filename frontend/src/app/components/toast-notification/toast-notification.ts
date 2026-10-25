@@ -6,8 +6,8 @@ import { Notificacion } from '../../services/notificacion';
   selector: 'app-notification-modal',
   standalone: true,
   imports: [AsyncPipe, NgClass],
-  templateUrl: './modal-notificacion.html',
+  templateUrl: './toast-notification.html',
 })
-export class NotificationModalComponent {
+export class ToastNotificationComponent {
   constructor(public notificacion: Notificacion) {}
 }

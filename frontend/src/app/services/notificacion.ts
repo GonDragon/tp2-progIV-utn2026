@@ -20,16 +20,33 @@ export class Notificacion {
   });
   state$ = this.state.asObservable();
 
+  // Guardamos el ID del timeout para poder reiniciarlo
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
+
   showInfo(message: string) {
-    this.state.next({ show: true, type: 'info', message });
+    this.display('info', message);
   }
 
   showWarning(message: string) {
-    this.state.next({ show: true, type: 'warning', message });
+    this.display('warning', message);
   }
 
   showError(message: string) {
-    this.state.next({ show: true, type: 'error', message });
+    this.display('error', message);
+  }
+
+  private display(type: NotificationType, message: string) {
+    this.state.next({ show: true, type, message });
+
+    // Si ya había un toast visible, cancelamos su temporizador de cierre
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+
+    // Se oculta automáticamente después de 3.5 segundos
+    this.timeoutId = setTimeout(() => {
+      this.close();
+    }, 3500);
   }
 
   close() {
