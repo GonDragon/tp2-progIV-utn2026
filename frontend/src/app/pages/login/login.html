@@ -1,1 +1,60 @@
-<p>login works!</p>
+<div class="flex items-center justify-center h-full p-4">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full max-w-sm bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-5">
+
+        <h2 class="text-2xl font-semibold text-center text-gray-800">Iniciar Sesión</h2>
+
+        @if (errorLogin) {
+            <div class="bg-red-50 text-red-600 text-sm p-3 rounded-md border border-red-200 text-center">
+                {{ errorLogin }}
+            </div>
+        }
+
+        <div>
+            <label for="usuario" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+            <input
+                    id="usuario"
+                    type="text"
+                    formControlName="usuario"
+                    class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+            @if (loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched) {
+                <p class="text-red-500 text-xs mt-1">El usuario es requerido.</p>
+            }
+        </div>
+
+        <div>
+            <label for="contrasenia" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+            <input
+                    id="contrasenia"
+                    type="password"
+                    formControlName="contrasenia"
+                    class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+            @if (loginForm.get('contrasenia')?.invalid && loginForm.get('contrasenia')?.touched) {
+                <div class="text-red-500 text-xs mt-1 space-y-1">
+                    @if (loginForm.get('contrasenia')?.hasError('required')) {
+                        <p>La contraseña es requerida.</p>
+                    }
+                    @if (loginForm.get('contrasenia')?.hasError('minlength')) {
+                        <p>Debe tener al menos 8 caracteres.</p>
+                    }
+                    @if (loginForm.get('contrasenia')?.hasError('pattern')) {
+                        <p>Debe contener al menos una mayúscula y un número.</p>
+                    }
+                </div>
+            }
+        </div>
+
+        <button
+                type="submit"
+                [disabled]="loginForm.invalid || cargando"
+                class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            @if (cargando) {
+                <span>Ingresando...</span>
+            } @else {
+                <span>Ingresar</span>
+            }
+        </button>
+
+    </form>
+</div>
