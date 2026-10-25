@@ -1,8 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { Layout } from './components/layout/layout';
+import { NotificationModalComponent } from './components/modal-notificacion/modal-notificacion';
 
 @Component({
-  imports: [Layout],
+  imports: [Layout, NotificationModalComponent ],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
