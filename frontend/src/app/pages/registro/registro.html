@@ -1,1 +1,121 @@
-<p>registro works!</p>
+<div class="flex items-center justify-center min-h-full p-4">
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="w-full max-w-lg bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4">
+
+        <h2 class="text-2xl font-semibold text-center text-gray-800 mb-2">Crear Cuenta</h2>
+
+        @if (errorRegistro) {
+            <div class="bg-red-50 text-red-600 text-sm p-3 rounded-md border border-red-200 text-center">
+                {{ errorRegistro }}
+            </div>
+        }
+
+        <!-- Inputs agrupados en 2 columnas para pantallas medianas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- Nombre -->
+            <div>
+                <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                <input id="nombre" type="text" formControlName="nombre" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @if (registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched) {
+                    <p class="text-red-500 text-xs mt-1">El nombre es requerido.</p>
+                }
+            </div>
+
+            <!-- Apellido -->
+            <div>
+                <label for="apellido" class="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
+                <input id="apellido" type="text" formControlName="apellido" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @if (registroForm.get('apellido')?.invalid && registroForm.get('apellido')?.touched) {
+                    <p class="text-red-500 text-xs mt-1">El apellido es requerido.</p>
+                }
+            </div>
+
+            <!-- Correo -->
+            <div class="md:col-span-2">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                <input id="email" type="email" formControlName="email" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @if (registroForm.get('email')?.invalid && registroForm.get('email')?.touched) {
+                    <p class="text-red-500 text-xs mt-1">Ingresa un correo válido.</p>
+                }
+            </div>
+
+            <!-- Nombre de Usuario -->
+            <div class="md:col-span-2">
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Nombre de Usuario</label>
+                <input id="username" type="text" formControlName="username" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @if (registroForm.get('username')?.invalid && registroForm.get('username')?.touched) {
+                    <p class="text-red-500 text-xs mt-1">El nombre de usuario es requerido.</p>
+                }
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                <input id="password" type="password" formControlName="password" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @if (registroForm.get('password')?.invalid && registroForm.get('password')?.touched) {
+                    <div class="text-red-500 text-xs mt-1">
+                        @if (registroForm.get('password')?.hasError('required')) { <p>Es requerida.</p> }
+                        @if (registroForm.get('password')?.hasError('minlength')) { <p>Mínimo 8 caracteres.</p> }
+                        @if (registroForm.get('password')?.hasError('pattern')) { <p>Debe tener 1 mayúscula y 1 número.</p> }
+                    </div>
+                }
+            </div>
+
+            <!-- Repetir Contraseña -->
+            <div>
+                <label for="repetirContrasenia" class="block text-sm font-medium text-gray-700 mb-1">Repetir Contraseña</label>
+                <input id="repetirContrasenia" type="password" formControlName="repetirContrasenia" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @if (registroForm.hasError('passwordsMismatch') && registroForm.get('repetirContrasenia')?.touched) {
+                    <p class="text-red-500 text-xs mt-1">Las contraseñas no coinciden.</p>
+                }
+            </div>
+
+            <!-- Fecha de Nacimiento -->
+            <div class="md:col-span-2">
+                <label for="fechaNacimiento" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
+                <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+                @if (registroForm.get('fechaNacimiento')?.invalid && registroForm.get('fechaNacimiento')?.touched) {
+                    <p class="text-red-500 text-xs mt-1">La fecha es requerida.</p>
+                }
+            </div>
+
+            <!-- Imagen de Perfil (File) -->
+            <div class="md:col-span-2">
+                <label for="imagenPerfil" class="block text-sm font-medium text-gray-700 mb-1">Imagen de Perfil</label>
+                <input id="imagenPerfil" type="file" accept="image/*" (change)="onFileChange($event)" class="w-full border border-gray-300 rounded-md p-2 text-sm text-gray-600 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer focus:outline-none">
+            </div>
+
+            <!-- Descripción Breve -->
+            <div class="md:col-span-2">
+                <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">Descripción Breve</label>
+                <textarea id="descripcion" rows="3" formControlName="descripcion" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                @if (registroForm.get('descripcion')?.invalid && registroForm.get('descripcion')?.touched) {
+                    <p class="text-red-500 text-xs mt-1">La descripción es requerida (Máx 250 caracteres).</p>
+                }
+            </div>
+        </div>
+
+        <!-- Campo Oculto Perfil -->
+        <input type="hidden" formControlName="perfil">
+
+        <!-- Botón de Submit -->
+        <div class="pt-2">
+            <button
+                    type="submit"
+                    [disabled]="registroForm.invalid || cargando"
+                    class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                @if (cargando) {
+                    <span>Registrando...</span>
+                } @else {
+                    <span>Registrarse</span>
+                }
+            </button>
+        </div>
+
+        <!-- Link a Login -->
+        <p class="text-center text-sm text-gray-600 mt-4">
+            ¿Ya tienes cuenta? <a routerLink="/login" class="text-blue-600 hover:underline font-medium">Inicia sesión</a>
+        </p>
+
+    </form>
+</div>
