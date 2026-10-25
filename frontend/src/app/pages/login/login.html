@@ -10,35 +10,35 @@
         }
 
         <div>
-            <label for="usuario" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
             <input
-                    id="usuario"
+                    id="username"
                     type="text"
-                    formControlName="usuario"
+                    formControlName="username"
                     class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-            @if (loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched) {
+            @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
                 <p class="text-red-500 text-xs mt-1">El usuario es requerido.</p>
             }
         </div>
 
         <div>
-            <label for="contrasenia" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
             <input
-                    id="contrasenia"
+                    id="password"
                     type="password"
-                    formControlName="contrasenia"
+                    formControlName="password"
                     class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-            @if (loginForm.get('contrasenia')?.invalid && loginForm.get('contrasenia')?.touched) {
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
                 <div class="text-red-500 text-xs mt-1 space-y-1">
-                    @if (loginForm.get('contrasenia')?.hasError('required')) {
+                    @if (loginForm.get('password')?.hasError('required')) {
                         <p>La contraseña es requerida.</p>
                     }
-                    @if (loginForm.get('contrasenia')?.hasError('minlength')) {
+                    @if (loginForm.get('password')?.hasError('minlength')) {
                         <p>Debe tener al menos 8 caracteres.</p>
                     }
-                    @if (loginForm.get('contrasenia')?.hasError('pattern')) {
+                    @if (loginForm.get('password')?.hasError('pattern')) {
                         <p>Debe contener al menos una mayúscula y un número.</p>
                     }
                 </div>
