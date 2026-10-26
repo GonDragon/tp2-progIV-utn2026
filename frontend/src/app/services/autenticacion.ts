@@ -16,6 +16,7 @@ export interface RegistroPayload {
   fechaNacimiento: string;
   descripcion: string;
   urlFoto: string;
+  perfil: string;
 }
 
 export interface AuthResponse {
