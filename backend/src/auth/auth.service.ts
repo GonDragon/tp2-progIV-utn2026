@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUsuarioDto } from './dto/create-usuario.dto.js';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto.js';
@@ -17,8 +17,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginAuthDto: AuthenticationDto) {
-    const user = await this.usuarioModel.findOne({ username: loginAuthDto.username });
+  async login(@Body() loginAuthDto: AuthenticationDto) {
+    const user = await this.usuarioModel.findOne({
+      username: loginAuthDto.username,
+    });
 
     if (
       !user ||
@@ -30,7 +32,7 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async register(createAuthDto: CreateUsuarioDto) {
+  async register(@Body() createAuthDto: CreateUsuarioDto) {
     createAuthDto.password = await this.passwordHasher.hash(
       createAuthDto.password,
     );

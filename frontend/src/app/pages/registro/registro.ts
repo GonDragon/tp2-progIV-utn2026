@@ -86,8 +86,8 @@ export class Registro {
       password: formValue.password!,
       fechaNacimiento: formValue.fechaNacimiento!,
       descripcion: formValue.descripcion!,
-      profile: formValue.perfil!,
       urlFoto: formValue.urlFoto || '',
+      perfil: formValue.perfil || 'usuario',
     };
 
     this.authService.registro(payload).subscribe({

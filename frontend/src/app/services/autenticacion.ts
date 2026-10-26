@@ -41,7 +41,7 @@ export class AutenticacionService {
   }
 
   public registro(datos: RegistroPayload): Observable<AuthResponse> {
-    return this.backend.post<AuthResponse>('/auth/registro', datos).pipe(
+    return this.backend.post<AuthResponse>('/auth/register', datos).pipe(
       tap((response) => {
         if (response && response.token) {
           this.guardarToken(response.token);
