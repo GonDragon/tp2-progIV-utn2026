@@ -57,7 +57,7 @@ export class AuthService {
 
   generateToken(usuario: UsuarioDocument) {
     const payload = { username: usuario.username, sub: usuario._id };
-    return this.jwtService.signAsync(payload);
+    return this.jwtService.signAsync(payload, { expiresIn: '31d' });
   }
 
   setTokenCookie(res: Response, token: string) {
@@ -65,7 +65,7 @@ export class AuthService {
       httpOnly: true, // para evitar ataques XSS
       sameSite: 'strict', // para evitar ataques CSRF
       secure: false,
-      maxAge: 1000 * 20, // 20 segundos, sincronización con el token
+      maxAge: 1000 * 60 * 60 * 24 * 31, // un mes
     });
   }
 }
