@@ -56,7 +56,7 @@ export class AuthService {
   }
 
   generateToken(usuario: UsuarioDocument) {
-    const payload = { username: usuario.username, sub: usuario._id };
+    const payload = { username: usuario.username, sub: usuario._id, rol: usuario.rol || 'usuario' };
     return this.jwtService.signAsync(payload, { expiresIn: '31d' });
   }
 

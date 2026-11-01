@@ -28,6 +28,9 @@ export class Usuario {
 
   @Prop()
   urlFoto: string;
+
+  @Prop()
+  rol: string;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);
