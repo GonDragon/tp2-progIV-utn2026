@@ -1,4 +1,10 @@
-import { Body, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUsuarioDto } from './dto/create-usuario.dto.js';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto.js';
@@ -26,13 +32,23 @@ export class AuthService {
       !user ||
       !(await this.passwordHasher.verify(loginAuthDto.password, user.password))
     ) {
-      throw new Error('Credenciales incorrectas');
+      // Devuelve un HTTP 401 Unauthorized
+      throw new UnauthorizedException('Credenciales incorrectas');
     }
 
     return this.generateToken(user);
   }
 
   async register(@Body() createAuthDto: CreateUsuarioDto) {
+    // Opcional: Verificar si el usuario ya existe para evitar error de duplicados en la base de datos
+    const existingUser = await this.usuarioModel.findOne({
+      username: createAuthDto.username,
+    });
+    if (existingUser) {
+      // Devuelve un HTTP 409 Conflict
+      throw new ConflictException('El nombre de usuario ya está registrado');
+    }
+
     createAuthDto.password = await this.passwordHasher.hash(
       createAuthDto.password,
     );
@@ -40,7 +56,8 @@ export class AuthService {
     const newUser = await this.usuarioModel.create(createAuthDto);
 
     if (!newUser) {
-      throw new Error('Failed to create user');
+      // Devuelve un HTTP 400 Bad Request
+      throw new BadRequestException('No se pudo crear el usuario');
     }
 
     return this.generateToken(newUser);
@@ -56,7 +73,11 @@ export class AuthService {
   }
 
   generateToken(usuario: UsuarioDocument) {
-    const payload = { username: usuario.username, sub: usuario._id, rol: usuario.rol || 'usuario' };
+    const payload = {
+      username: usuario.username,
+      sub: usuario._id,
+      rol: usuario.rol || 'usuario',
+    };
     return this.jwtService.signAsync(payload, { expiresIn: '31d' });
   }
 
