@@ -33,7 +33,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.login(loginAuthDto);
-    this.authService.setTokenCookie(res, await result);
+    this.authService.setTokenCookie(res, result);
     return { token: result };
   }
 
