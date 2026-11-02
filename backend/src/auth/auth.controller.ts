@@ -24,7 +24,7 @@ export class AuthController {
   ) {
     const result = await this.authService.register(createAuthDto);
     this.authService.setTokenCookie(res, result);
-    return result;
+    return { token: result };
   }
 
   @Post('login')
@@ -33,13 +33,13 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.login(loginAuthDto);
-    this.authService.setTokenCookie(res, await result);
-    return result;
+    this.authService.setTokenCookie(res, result);
+    return { token: result };
   }
 
   @Get('perfil/:id')
   @UseGuards(AuthGuard)
   validateToken(@Param('id') id: string) {
-    return this.authService.getPerfil(id);
+    return { id: this.authService.getPerfil(id) };
   }
 }

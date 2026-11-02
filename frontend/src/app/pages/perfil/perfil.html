@@ -1,1 +1,237 @@
-<p>perfil works!</p>
+<div class="perfil-view">
+
+  <!-- Estado de carga general de usuario -->
+  <div *ngIf="cargandoUsuario" class="xp-window perfil-loading-dialog">
+    <div class="xp-titlebar">
+      <div class="xp-titlebar-title">
+        <span>⏳ Buscando cuenta de usuario...</span>
+      </div>
+    </div>
+    <div class="perfil-dialog-body">
+      <div class="xp-spinner"></div>
+      <p class="perfil-dialog-title">Cargando información del perfil...</p>
+      <p class="perfil-dialog-subtitle">Por favor espere mientras se consultan los registros.</p>
+    </div>
+  </div>
+
+  <!-- Estado de error -->
+  <div *ngIf="!cargandoUsuario && error" class="xp-window perfil-error-dialog">
+    <div class="xp-titlebar">
+      <div class="xp-titlebar-title">
+        <span>⚠️ Error de Usuario</span>
+      </div>
+      <div class="xp-window-controls">
+        <a routerLink="/publicaciones" class="xp-win-btn xp-win-btn-close">✕</a>
+      </div>
+    </div>
+    <div class="perfil-dialog-body">
+      <div class="perfil-error-icon">
+        ✕
+      </div>
+      <h2 class="perfil-dialog-title">{{ error }}</h2>
+      <p class="perfil-dialog-subtitle">El perfil solicitado no existe o no se pudo acceder a sus datos.</p>
+      <div class="perfil-dialog-actions">
+        <a routerLink="/publicaciones" class="xp-button xp-button-primary">
+          Aceptar
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido del Perfil cuando se encuentra el usuario -->
+  <div *ngIf="!cargandoUsuario && usuario" class="perfil-content">
+
+    <!-- Ventana Principal: Ficha de Propiedades de Usuario XP -->
+    <div class="xp-window perfil-properties-window">
+
+      <!-- Barra de Título -->
+      <div class="xp-titlebar">
+        <div class="xp-titlebar-title">
+          <span>👤 Propiedades de: {{ usuario.nombre }} {{ usuario.apellido }}</span>
+        </div>
+        <div class="xp-window-controls">
+          <span class="xp-win-btn xp-win-btn-default" title="Ayuda">?</span>
+          <a routerLink="/publicaciones" class="xp-win-btn xp-win-btn-close" title="Cerrar">✕</a>
+        </div>
+      </div>
+
+      <!-- Pestañas de Propiedades XP -->
+      <div class="perfil-tab-header">
+        <div class="xp-tab-container">
+          <div class="xp-tab-button active">
+            <span>👤 Usuario</span>
+          </div>
+          <div class="xp-tab-button">
+            <span>⚙️ Cuenta</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido Interior de la Ficha -->
+      <div class="perfil-body">
+
+        <!-- Ficha de Identidad Superior -->
+        <div class="perfil-header-card">
+          <!-- Marco de Avatar XP -->
+          <div class="perfil-avatar-frame">
+            <img
+              *ngIf="usuario.urlFoto && !fotoError"
+              [src]="usuario.urlFoto"
+              [alt]="usuario.nombre || usuario.username"
+              (error)="onImgError()"
+              class="perfil-avatar-image"
+            />
+            <div
+              *ngIf="!usuario.urlFoto || fotoError"
+              class="perfil-avatar-fallback select-none"
+            >
+              {{ getIniciales() }}
+            </div>
+          </div>
+
+          <!-- Información General -->
+          <div class="perfil-header-details">
+            <div class="perfil-name-container">
+              <h1 class="perfil-display-name">
+                {{ usuario.nombre }} {{ usuario.apellido }}
+              </h1>
+            </div>
+
+            <div class="perfil-badges-row">
+              <span class="perfil-handle">&#64;{{ usuario.username }}</span>
+              <span
+                *ngIf="usuario.rol"
+                class="perfil-role-badge"
+              >
+                {{ usuario.rol }}
+              </span>
+              <span
+                *ngIf="esMiPerfil"
+                class="perfil-self-badge"
+              >
+                Tu Cuenta
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grupo 1: Datos de Contacto y Cuenta -->
+        <fieldset class="xp-groupbox">
+          <legend class="xp-groupbox-legend">Información de la Cuenta</legend>
+          
+          <div class="perfil-fields-grid">
+            <div class="perfil-field-row">
+              <span class="perfil-field-label">Nombre de usuario:</span>
+              <div class="perfil-field-value">&#64;{{ usuario.username }}</div>
+            </div>
+
+            <div class="perfil-field-row">
+              <span class="perfil-field-label">Correo electrónico:</span>
+              <div class="perfil-field-value">{{ usuario.email }}</div>
+            </div>
+
+            <div class="perfil-field-row">
+              <span class="perfil-field-label">Fecha de nacimiento:</span>
+              <div class="perfil-field-value">{{ usuario.fechaNacimiento || 'No especificada' }}</div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Grupo 2: Biografía / Descripción -->
+        <fieldset *ngIf="usuario.descripcion" class="xp-groupbox">
+          <legend class="xp-groupbox-legend">Descripción / Biografía</legend>
+          <div class="perfil-bio-box">
+            {{ usuario.descripcion }}
+          </div>
+        </fieldset>
+
+      </div>
+
+      <!-- Pie de Diálogo XP con Botones Aceptar / Cancelar -->
+      <div class="perfil-dialog-footer">
+        <a routerLink="/publicaciones" class="xp-button xp-button-primary">
+          Aceptar
+        </a>
+        <a routerLink="/publicaciones" class="xp-button">
+          Cancelar
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Ventana Secundaria: Muro / Explorador de Publicaciones del Usuario -->
+    <div class="xp-window perfil-posts-window">
+      
+      <!-- Barra de Título -->
+      <div class="xp-titlebar">
+        <div class="xp-titlebar-title">
+          <span>📁 Publicaciones de {{ usuario.nombre }}</span>
+        </div>
+        <div class="xp-window-controls">
+          <span class="xp-win-btn xp-win-btn-default">_</span>
+          <span class="xp-win-btn xp-win-btn-default">□</span>
+        </div>
+      </div>
+
+      <!-- Barra de Herramientas / Resumen superior -->
+      <div class="xp-toolbar-panel perfil-posts-toolbar">
+        <div class="perfil-toolbar-title-group">
+          <span>📂</span>
+          <span class="perfil-toolbar-title">
+            {{ esMiPerfil ? 'Mis publicaciones recientes' : 'Publicaciones compartidas' }}
+          </span>
+        </div>
+        <span class="perfil-toolbar-count">
+          {{ publicaciones.length }} elemento(s)
+        </span>
+      </div>
+
+      <!-- Cuerpo del Muro de Publicaciones -->
+      <div class="perfil-posts-body">
+        
+        <!-- Estado cargando publicaciones -->
+        <div *ngIf="cargandoPublicaciones" class="perfil-panel-state">
+          <div class="xp-spinner"></div>
+          <p class="perfil-state-title">Buscando publicaciones del usuario...</p>
+        </div>
+
+        <!-- Sin publicaciones -->
+        <div *ngIf="!cargandoPublicaciones && publicaciones.length === 0" class="perfil-panel-state">
+          <div class="perfil-info-icon">
+            ℹ️
+          </div>
+          <h3 class="perfil-state-title">Sin publicaciones registradas</h3>
+          <p class="perfil-state-subtitle">Este usuario no ha publicado contenido todavía.</p>
+        </div>
+
+        <!-- Listado de Publicaciones -->
+        <div *ngIf="!cargandoPublicaciones && publicaciones.length > 0" class="perfil-posts-grid">
+          <app-publicacion
+            *ngFor="let pub of publicaciones"
+            [publicacion]="pub"
+            [usuarioActual]="usuarioActual"
+            [leGusta]="estaLikeada(pub._id)"
+            (like)="onDarLike($event)"
+            (quitarLike)="onQuitarLike($event)"
+            (eliminar)="onEliminar($event)"
+          />
+        </div>
+
+      </div>
+
+      <!-- Barra de estado inferior XP -->
+      <div class="xp-statusbar">
+        <div class="xp-statusbar-panel">
+          <span>✔️</span>
+          <span>Listo</span>
+        </div>
+        <div class="xp-statusbar-panel">
+          <span>{{ publicaciones.length }} publicación(es)</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

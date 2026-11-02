@@ -1,60 +1,103 @@
-<div class="flex items-center justify-center h-full p-4">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full max-w-sm bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-5">
+<div class="login-wrapper">
+    <!-- Ventana Diálogo de Inicio de Sesión estilo Windows XP -->
+    <div class="xp-window login-dialog">
 
-        <h2 class="text-2xl font-semibold text-center text-gray-800">Iniciar Sesión</h2>
-
-        @if (errorLogin) {
-            <div class="bg-red-50 text-red-600 text-sm p-3 rounded-md border border-red-200 text-center">
-                {{ errorLogin }}
+        <!-- Barra de Título -->
+        <div class="xp-titlebar">
+            <div class="xp-titlebar-title">
+                <span>🐾 Iniciar Sesión en Patitas</span>
             </div>
-        }
 
-        <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-            <input
-                    id="username"
-                    type="text"
-                    formControlName="username"
-                    class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-            @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
-                <p class="text-red-500 text-xs mt-1">El usuario es requerido.</p>
-            }
+            <!-- Botones Ventana -->
+            <div class="xp-window-controls">
+                <span class="xp-win-btn xp-win-btn-default">?</span>
+                <span class="xp-win-btn xp-win-btn-close">✕</span>
+            </div>
         </div>
 
-        <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-            <input
-                    id="password"
-                    type="password"
-                    formControlName="password"
-                    class="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-                <div class="text-red-500 text-xs mt-1 space-y-1">
-                    @if (loginForm.get('password')?.hasError('required')) {
-                        <p>La contraseña es requerida.</p>
-                    }
-                    @if (loginForm.get('password')?.hasError('minlength')) {
-                        <p>Debe tener al menos 8 caracteres.</p>
-                    }
-                    @if (loginForm.get('password')?.hasError('pattern')) {
-                        <p>Debe contener al menos una mayúscula y un número.</p>
-                    }
+        <!-- Banner superior estilo Diálogo XP -->
+        <div class="xp-wizard-banner">
+            <div>
+                <h2 class="xp-wizard-title">Bienvenido a Patitas</h2>
+                <p class="xp-wizard-subtitle">Ingrese sus credenciales de usuario para continuar.</p>
+            </div>
+            <div class="login-icon-badge">
+                🔑
+            </div>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+
+            @if (errorLogin) {
+                <div class="xp-alert-error">
+                    <span>⚠️</span>
+                    <span>{{ errorLogin }}</span>
                 </div>
             }
-        </div>
 
-        <button
-                type="submit"
-                [disabled]="loginForm.invalid || cargando"
-                class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-            @if (cargando) {
-                <span>Ingresando...</span>
-            } @else {
-                <span>Ingresar</span>
-            }
-        </button>
+            <div>
+                <label for="username" class="login-label">Nombre de Usuario:</label>
+                <input
+                        id="username"
+                        type="text"
+                        formControlName="username"
+                        class="xp-input"
+                        placeholder="Ej. usuario123"
+                        autocomplete="username"
+                >
+                @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+                    <p class="xp-error-text">El usuario es requerido.</p>
+                }
+            </div>
 
-    </form>
+            <div>
+                <label for="password" class="login-label">Contraseña:</label>
+                <input
+                        id="password"
+                        type="password"
+                        formControlName="password"
+                        class="xp-input"
+                        placeholder="••••••••"
+                        autocomplete="current-password"
+                >
+                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                    <div class="xp-error-text">
+                        @if (loginForm.get('password')?.hasError('required')) {
+                            <p>La contraseña es requerida.</p>
+                        }
+                        @if (loginForm.get('password')?.hasError('minlength')) {
+                            <p>Debe tener al menos 8 caracteres.</p>
+                        }
+                        @if (loginForm.get('password')?.hasError('pattern')) {
+                            <p>Debe contener al menos una mayúscula y un número.</p>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Separador 3D XP -->
+            <div class="xp-separator"></div>
+
+            <div class="login-actions">
+                <button
+                        type="submit"
+                        [disabled]="loginForm.invalid || cargando"
+                        class="xp-button xp-button-primary xp-button-block">
+                    @if (cargando) {
+                        <span>Iniciando sesión...</span>
+                    } @else {
+                        <span>Aceptar</span>
+                    }
+                </button>
+
+                <!-- Acceso a Registro -->
+                <p class="login-footer-text">
+                    ¿Aún no tienes cuenta?
+                    <a routerLink="/registro" class="login-link">Crear cuenta</a>
+                </p>
+            </div>
+
+        </form>
+
+    </div>
 </div>

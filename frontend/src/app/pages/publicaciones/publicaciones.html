@@ -1,1 +1,151 @@
-<p>publicaciones works!</p>
+<div class="publicaciones-container">
+
+  <!-- Ventana Principal / Explorador de Publicaciones XP -->
+  <div class="xp-window publicaciones-explorer">
+    
+    <!-- Barra de Título del Explorador -->
+    <div class="xp-titlebar">
+      <div class="xp-titlebar-title">
+        <span>📰 Muro de Publicaciones - Patitas XP</span>
+      </div>
+      <div class="xp-window-controls">
+        <span class="xp-win-btn xp-win-btn-default" title="Minimizar">_</span>
+        <span class="xp-win-btn xp-win-btn-default" title="Maximizar">□</span>
+        <span class="xp-win-btn xp-win-btn-close" title="Cerrar">✕</span>
+      </div>
+    </div>
+
+    <!-- Barra de Menú XP -->
+    <div class="xp-menubar">
+      <span class="xp-menubar-item">Archivo</span>
+      <span class="xp-menubar-item">Edición</span>
+      <span class="xp-menubar-item">Ver</span>
+      <span class="xp-menubar-item">Favoritos</span>
+      <span class="xp-menubar-item">Herramientas</span>
+      <span class="xp-menubar-item">Ayuda</span>
+    </div>
+
+    <!-- Barra de Dirección XP -->
+    <div class="xp-addressbar">
+      <span class="xp-addressbar-label">Dirección:</span>
+      <div class="xp-addressbar-input">
+        <span>📁</span>
+        <span>Patitas://Muro/Publicaciones</span>
+      </div>
+      <button type="button" class="xp-button publicaciones-refresh-btn" (click)="cargarPublicaciones()" title="Actualizar">
+        <span>🔄</span>
+      </button>
+    </div>
+
+    <!-- Barra de Herramientas y Filtros XP -->
+    <div class="xp-toolbar-panel publicaciones-toolbar">
+      <div class="publicaciones-toolbar-filters">
+        <span class="publicaciones-filter-label">Ordenar por:</span>
+        <button
+          type="button"
+          (click)="cambiarOrden('fecha')"
+          [ngClass]="{
+            'xp-button-primary': criterioOrden === 'fecha',
+            'xp-button': criterioOrden !== 'fecha'
+          }"
+          class="publicaciones-filter-btn"
+        >
+          <span>🕒 Más recientes</span>
+        </button>
+
+        <button
+          type="button"
+          (click)="cambiarOrden('likes')"
+          [ngClass]="{
+            'xp-button-primary': criterioOrden === 'likes',
+            'xp-button': criterioOrden !== 'likes'
+          }"
+          class="publicaciones-filter-btn"
+        >
+          <span>❤️ Más populares</span>
+        </button>
+      </div>
+
+      <div class="publicaciones-page-indicator">
+        <span>Página {{ paginaActual }}</span>
+      </div>
+    </div>
+
+    <!-- Vista de Contenido / Feed -->
+    <div class="publicaciones-feed-area">
+
+      <!-- Estado de carga -->
+      <div *ngIf="cargando" class="publicaciones-status-dialog">
+        <div class="xp-spinner"></div>
+        <p class="publicaciones-status-title">Buscando publicaciones en el servidor...</p>
+        <p class="publicaciones-status-subtitle">Por favor espere mientras se cargan los datos.</p>
+      </div>
+
+      <!-- Estado vacío -->
+      <div *ngIf="!cargando && publicaciones.length === 0" class="publicaciones-status-dialog">
+        <div class="publicaciones-empty-icon">
+          ℹ️
+        </div>
+        <h3 class="publicaciones-status-title">No se encontraron publicaciones</h3>
+        <p class="publicaciones-status-subtitle">No hay elementos disponibles con el filtro actual.</p>
+      </div>
+
+      <!-- Grilla de Publicaciones -->
+      <div *ngIf="!cargando && publicaciones.length > 0" class="publicaciones-grid">
+        <app-publicacion
+          *ngFor="let pub of publicaciones"
+          [publicacion]="pub"
+          [usuarioActual]="usuarioActual"
+          [leGusta]="estaLikeada(pub._id)"
+          (like)="onDarLike($event)"
+          (quitarLike)="onQuitarLike($event)"
+          (eliminar)="onEliminar($event)"
+        />
+      </div>
+
+    </div>
+
+    <!-- Paginación estilo Barra de Navegación XP -->
+    <div *ngIf="!cargando && (publicaciones.length > 0 || paginaActual > 1)" class="publicaciones-pagination-bar">
+      <button
+        type="button"
+        (click)="paginaAnterior()"
+        [disabled]="paginaActual <= 1 || cargando"
+        class="xp-button publicaciones-page-btn"
+      >
+        <span>◀</span>
+        <span>Anterior</span>
+      </button>
+
+      <div class="publicaciones-page-badge">
+        <span>Página {{ paginaActual }}</span>
+      </div>
+
+      <button
+        type="button"
+        (click)="paginaSiguiente()"
+        [disabled]="!hayMasPublicaciones || cargando"
+        class="xp-button publicaciones-page-btn"
+      >
+        <span>Siguiente</span>
+        <span>▶</span>
+      </button>
+    </div>
+
+    <!-- Barra de Estado Inferior XP (Statusbar) -->
+    <div class="xp-statusbar">
+      <div class="xp-statusbar-panel">
+        <span>✔️</span>
+        <span>Listo</span>
+      </div>
+      <div class="xp-statusbar-panel">
+        <span>{{ publicaciones.length }} elemento(s)</span>
+      </div>
+      <div class="xp-statusbar-panel publicaciones-status-panel-extra">
+        <span>🔒 Patitas Red Local</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/perfil/perfil').then((m) => m.Perfil),
   },
   {
+    path: 'perfil/:usuario',
+    loadComponent: () => import('./pages/perfil/perfil').then((m) => m.Perfil),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

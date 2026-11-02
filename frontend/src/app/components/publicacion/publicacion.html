@@ -1,0 +1,103 @@
+<article class="xp-window publicacion-card">
+  <div>
+    <!-- Barra de Título / Cabecera estilo Ventana de Windows XP -->
+    <div class="xp-titlebar">
+      <div class="xp-titlebar-title">
+        <!-- Avatar XP con marco clásico -->
+        <div class="publicacion-avatar">
+          {{ autorNombre.charAt(0).toUpperCase() }}
+        </div>
+        <span class="publicacion-author-name">{{ autorNombre }}</span>
+      </div>
+
+      <div class="xp-window-controls">
+        <span class="publicacion-header-date">{{ publicacion.createdAt | date:'dd/MM/yy HH:mm' }}</span>
+
+        <!-- Botón Eliminar estilo botón de cerrar '✕' de XP si puede eliminar -->
+        <button
+          *ngIf="puedeEliminar"
+          type="button"
+          (click)="confirmarEliminar()"
+          class="xp-win-btn xp-win-btn-close"
+          title="Eliminar publicación"
+        >
+          ✕
+        </button>
+
+        <!-- Botones decorativos de ventana si no es botón de eliminar -->
+        <div *ngIf="!puedeEliminar" class="xp-window-controls">
+          <span class="xp-win-btn xp-win-btn-default">_</span>
+          <span class="xp-win-btn xp-win-btn-default">□</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subcabecera con detalles de autor y fecha para mobile -->
+    <div class="publicacion-subbar">
+      <div>
+        <span *ngIf="autorUsername" class="publicacion-author-username">&#64;{{ autorUsername }}</span>
+      </div>
+      <div>
+        <span>{{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+    </div>
+
+    <!-- Cuerpo del mensaje -->
+    <div class="publicacion-body">
+      <!-- Título -->
+      <h2 class="publicacion-titulo">
+        {{ publicacion.titulo }}
+      </h2>
+
+      <!-- Contenido -->
+      <p class="publicacion-contenido">
+        {{ publicacion.contenido }}
+      </p>
+
+      <!-- Imagen (si existe) -->
+      <div *ngIf="publicacion.url_imagen" class="publicacion-imagen-wrapper">
+        <img
+          [src]="publicacion.url_imagen"
+          [alt]="publicacion.titulo"
+          class="publicacion-imagen"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de la ventana con barra de estado y botón Me Gusta XP -->
+  <div class="publicacion-footer">
+    <div class="publicacion-status">
+      <span class="publicacion-status-dot"></span>
+      <span>Listo</span>
+    </div>
+
+    <!-- Botón XP Me Gusta -->
+    <button
+      type="button"
+      (click)="toggleLike()"
+      [ngClass]="{
+        'xp-button-liked': leGusta,
+        'xp-button': !leGusta
+      }"
+      class="publicacion-like-btn"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="publicacion-like-icon"
+        [ngClass]="{ 'publicacion-like-icon-active': leGusta }"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+        />
+      </svg>
+      <span>{{ publicacion.likes }} {{ publicacion.likes === 1 ? 'me gusta' : 'me gusta' }}</span>
+    </button>
+  </div>
+</article>
