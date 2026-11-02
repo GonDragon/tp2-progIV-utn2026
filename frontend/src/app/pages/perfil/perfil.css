@@ -1,23 +1,345 @@
-/* Clases CSS para personalización manual de la página de Perfil */
-/*
-.perfil-container {}
-.perfil-loading {}
-.perfil-error {}
-.perfil-card {}
-.perfil-avatar-container {}
-.perfil-avatar-image {}
-.perfil-avatar-fallback {}
-.perfil-badge-rol {}
-.perfil-info {}
-.perfil-nombre {}
-.perfil-username {}
-.perfil-descripcion {}
-.perfil-detalles {}
-.perfil-detalle-item {}
-.perfil-detalle-label {}
-.perfil-detalle-valor {}
-.perfil-publicaciones-section {}
-.perfil-publicaciones-titulo {}
-.perfil-sin-publicaciones {}
-.perfil-publicaciones-grid {}
-*/
+.perfil-view {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 4px 2px 20px 2px;
+}
+
+@media (min-width: 640px) {
+  .perfil-view {
+    padding: 8px 6px 20px 6px;
+  }
+}
+
+.perfil-loading-dialog,
+.perfil-error-dialog {
+  max-width: 420px;
+  margin: 30px auto;
+}
+
+.perfil-dialog-body {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--xp-window-bg);
+  gap: 8px;
+}
+
+.perfil-dialog-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #0c0c0c;
+  margin: 0;
+}
+
+.perfil-dialog-subtitle {
+  font-size: 11px;
+  color: #555555;
+  margin: 0;
+}
+
+.perfil-dialog-actions {
+  margin-top: 8px;
+}
+
+.perfil-error-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #cc2200;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  margin-bottom: 4px;
+}
+
+.perfil-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Ventana de Propiedades XP */
+.perfil-properties-window {
+  width: 100%;
+}
+
+.perfil-tab-header {
+  padding: 6px 8px 0 8px;
+  background-color: var(--xp-window-bg);
+  border-bottom: 1px solid #7f9db9;
+}
+
+.perfil-body {
+  padding: 10px;
+  background-color: var(--xp-window-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Header / Identidad */
+.perfil-header-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  background-color: #f5f4ea;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 10px;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+
+.perfil-avatar-frame {
+  width: 68px;
+  height: 68px;
+  border-radius: 3px;
+  border: 2px solid var(--xp-border-inset);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2), 1px 1px 3px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.perfil-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1px;
+}
+
+.perfil-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1c5ee8 0%, #0a246a 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: bold;
+  border-radius: 1px;
+}
+
+.perfil-header-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.perfil-name-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.perfil-display-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--xp-text-navy);
+  margin: 0;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.perfil-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.perfil-handle {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--xp-text-blue);
+}
+
+.perfil-role-badge {
+  font-size: 9.5px;
+  font-weight: bold;
+  background: #d4e4fc;
+  color: #002266;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 1px 5px;
+  text-transform: uppercase;
+}
+
+.perfil-self-badge {
+  font-size: 9.5px;
+  font-weight: bold;
+  background: #def5de;
+  color: #1b5e20;
+  border: 1px solid #81c784;
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+
+/* Grilla de campos en el Groupbox */
+.perfil-fields-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.perfil-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+@media (min-width: 520px) {
+  .perfil-field-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.perfil-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #444444;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.perfil-field-value {
+  background: #ffffff;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: normal;
+  color: #0c0c0c;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.perfil-bio-box {
+  background: #ffffff;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #0c0c0c;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
+  white-space: pre-line;
+  line-height: 1.4;
+  min-height: 48px;
+}
+
+.perfil-dialog-footer {
+  padding: 8px 12px;
+  background-color: var(--xp-window-bg);
+  border-top: 1px solid #d0ccba;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Ventana de Publicaciones del Usuario */
+.perfil-posts-window {
+  width: 100%;
+}
+
+.perfil-posts-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  padding: 6px 10px;
+}
+
+.perfil-toolbar-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.perfil-toolbar-title {
+  font-size: 11.5px;
+  font-weight: bold;
+  color: var(--xp-text-navy);
+}
+
+.perfil-toolbar-count {
+  font-size: 10.5px;
+  color: #555555;
+}
+
+.perfil-posts-body {
+  padding: 8px;
+  background-color: var(--xp-window-bg);
+}
+
+.perfil-panel-state {
+  text-align: center;
+  padding: 24px 16px;
+  background-color: #ffffff;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.perfil-state-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #0c0c0c;
+  margin: 6px 0 0 0;
+}
+
+.perfil-state-subtitle {
+  font-size: 11px;
+  color: #555555;
+  margin: 2px 0 0 0;
+}
+
+.perfil-info-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #1c5ee8;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px solid #ffffff;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.perfil-posts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .perfil-posts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -1,37 +1,59 @@
-<div class="h-screen flex flex-col bg-gray-50">
+<div class="layout-container">
 
-    <!-- Banner superior -->
-    <header class="bg-white shadow-sm p-4 flex items-center justify-center border-b border-gray-200 z-10">
-        <h1 class="text-xl font-bold text-gray-800">Patitas</h1>
+    <!-- Banner superior estilo Barra de Título Windows XP -->
+    <header class="xp-titlebar layout-header">
+        <div class="xp-titlebar-title">
+            <div class="layout-app-icon">
+                <span>🐾</span>
+            </div>
+            <h1 class="layout-app-title">
+                Patitas - Red Social
+            </h1>
+        </div>
+
+        <!-- Botones decorativos de ventana -->
+        <div class="xp-window-controls">
+            <span class="xp-win-btn xp-win-btn-default">_</span>
+            <span class="xp-win-btn xp-win-btn-default">□</span>
+            <span class="xp-win-btn xp-win-btn-close">✕</span>
+        </div>
     </header>
 
-    <!-- Contenido de la página -->
-    <main class="flex-1 overflow-y-auto">
+    <!-- Contenido de la página dentro del escritorio / ventana principal -->
+    <main class="layout-main">
         <!-- El router-outlet renderiza las páginas según la ruta -->
         <router-outlet></router-outlet>
     </main>
 
-    <!-- Barra inferior de navegación -->
-    <nav class="bg-white border-t border-gray-200 pb-safe">
-        <ul class="flex justify-around items-center h-16">
-            <li class="flex-1 flex justify-center">
-                <a routerLink="/registro" routerLinkActive="text-blue-600 font-semibold" class="text-gray-500 hover:text-blue-500 text-sm flex flex-col items-center p-2 w-full text-center">
-                    Registro
+    <!-- Barra inferior de navegación estilo Barra de Tareas (Taskbar) de Windows XP -->
+    <nav class="xp-taskbar layout-nav">
+        <ul class="layout-nav-list">
+            <li class="layout-nav-item">
+                <a routerLink="/registro"
+                   routerLinkActive="active"
+                   class="xp-task-button">
+                    <span>Registro</span>
                 </a>
             </li>
-            <li class="flex-1 flex justify-center">
-                <a routerLink="/login" routerLinkActive="text-blue-600 font-semibold" class="text-gray-500 hover:text-blue-500 text-sm flex flex-col items-center p-2 w-full text-center">
-                    Login
+            <li class="layout-nav-item">
+                <a routerLink="/login"
+                   routerLinkActive="active"
+                   class="xp-task-button">
+                    <span>Login</span>
                 </a>
             </li>
-            <li class="flex-1 flex justify-center">
-                <a routerLink="/perfil" routerLinkActive="text-blue-600 font-semibold" class="text-gray-500 hover:text-blue-500 text-sm flex flex-col items-center p-2 w-full text-center">
-                    Perfil
+            <li class="layout-nav-item">
+                <a routerLink="/perfil"
+                   routerLinkActive="active"
+                   class="xp-task-button">
+                    <span>Perfil</span>
                 </a>
             </li>
-            <li class="flex-1 flex justify-center">
-                <a routerLink="/publicaciones" routerLinkActive="text-blue-600 font-semibold" class="text-gray-500 hover:text-blue-500 text-sm flex flex-col items-center p-2 w-full text-center">
-                    Publicaciones
+            <li class="layout-nav-item">
+                <a routerLink="/publicaciones"
+                   routerLinkActive="active"
+                   class="xp-task-button">
+                    <span>Publicaciones</span>
                 </a>
             </li>
         </ul>

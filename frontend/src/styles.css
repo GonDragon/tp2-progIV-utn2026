@@ -9,13 +9,573 @@
 
 @import 'tailwindcss';
 
-* {
-    font-family: 'Happy Monkey', sans-serif;
+:root {
+  /* Windows XP Luna Color Palette */
+  --xp-window-bg: #ece9d8;
+  --xp-window-border: #0055ea;
+  --xp-dialog-bg: #f0ede0;
+  --xp-surface-inset: #f5f4ea;
+  --xp-titlebar-start: #0058ee;
+  --xp-titlebar-mid: #2578f5;
+  --xp-titlebar-end: #0046d5;
+  --xp-titlebar-border: #002266;
+  --xp-taskbar-start: #245edb;
+  --xp-taskbar-mid: #3982f7;
+  --xp-taskbar-end: #1941a5;
+  --xp-taskbar-btn: #3882f7;
+  --xp-taskbar-btn-hover: #5398f8;
+  --xp-taskbar-btn-active: #194ab8;
+  --xp-btn-bg: #ece9d8;
+  --xp-btn-border-light: #ffffff;
+  --xp-btn-border-dark: #707070;
+  --xp-btn-border-shadow: #00138c;
+  --xp-border-inset: #7f9db9;
+  --xp-border-inset-shadow: #406080;
+  --xp-text-main: #0c0c0c;
+  --xp-text-navy: #0c2040;
+  --xp-text-blue: #003399;
+  --xp-text-muted: #555555;
+  --xp-highlight: #316ac5;
+  --xp-highlight-text: #ffffff;
 }
 
-main {
-    background-image: url('/img/XP-Wallpaper.jpg')!important;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Happy Monkey', Tahoma, 'Segoe UI', sans-serif;
+  background-color: #004e98;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  font-family: 'Happy Monkey', Tahoma, 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Windows XP Theme Components & Reusable Utilities
+   ========================================================================== */
+
+/* Ventana Clásica XP (Window) */
+.xp-window {
+  background-color: var(--xp-window-bg);
+  border: 3px solid #0055ea;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.35), inset 1px 1px 0px rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.xp-window > form {
+    padding: 12px;
+}
+
+    /* Barra de Título (Title Bar) */
+.xp-titlebar {
+  background: linear-gradient(180deg, #0058ee 0%, #3593ff 12%, #288eff 25%, #0061e3 70%, #0045c7 100%);
+  color: #ffffff;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom: 1px solid #002277;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+  font-size: 13px;
+  min-height: 28px;
+  user-select: none;
+}
+
+.xp-titlebar-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Botones de Control de Ventana (_ □ ✕ ?) */
+.xp-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.xp-win-btn {
+  width: 21px;
+  height: 21px;
+  border-radius: 3px;
+  border: 1px solid #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 1px 1px 2px rgba(0, 0, 0, 0.4);
+  transition: filter 0.1s ease, transform 0.05s ease;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.xp-win-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.xp-win-btn-default {
+  background: linear-gradient(180deg, #3c8efc 0%, #156bf2 50%, #0c57d1 100%);
+  color: #ffffff;
+}
+
+.xp-win-btn-default:hover {
+  background: linear-gradient(180deg, #539dfc 0%, #2b7bf5 50%, #1765e3 100%);
+}
+
+.xp-win-btn-close {
+  background: linear-gradient(180deg, #e76c53 0%, #d83d1c 45%, #b21e02 100%);
+  color: #ffffff;
+}
+
+.xp-win-btn-close:hover {
+  background: linear-gradient(180deg, #f2826c 0%, #e64e2d 45%, #c82607 100%);
+}
+
+/* Botón Estilo XP Luna */
+.xp-button,
+.xp-btn {
+  background: linear-gradient(180deg, #ffffff 0%, #ece9d8 25%, #dfdcd1 80%, #cbc7b7 100%);
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  color: #0c0c0c;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: normal;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #e3dfd3, 0 1px 2px rgba(0,0,0,0.15);
+  transition: all 0.1s ease;
+  user-select: none;
+  text-decoration: none;
+  min-height: 24px;
+}
+
+.xp-button:hover,
+.xp-btn:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fbe0a0 25%, #f7cf72 80%, #f1be43 100%);
+  border-color: #f19e11;
+  box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #fce4ad, 0 0 3px rgba(241, 158, 17, 0.7);
+}
+
+.xp-button:active,
+.xp-btn:active {
+  background: linear-gradient(180deg, #d4d0c2 0%, #ece9d8 60%, #f4f2e8 100%);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.35);
+  transform: translate(1px, 1px);
+}
+
+.xp-button:disabled,
+.xp-btn:disabled {
+  background: #f0ede0;
+  border-color: #a8a598;
+  color: #8c887b;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.7;
+}
+
+.xp-button-primary {
+  border-color: #003c74;
+  font-weight: bold;
+  box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #c2bfb1, 0 0 0 1px #225ad7;
+}
+
+.xp-button-block {
+  width: 100%;
+}
+
+.xp-button-liked {
+  background: linear-gradient(180deg, #fff0f0 0%, #ffd6d6 30%, #fca7a7 80%, #f47f7f 100%);
+  border: 1px solid #a32222;
+  border-radius: 3px;
+  color: #7a0c0c;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0 #ffffff, 0 1px 2px rgba(163, 34, 34, 0.2);
+}
+
+.xp-button-liked:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #ffe3e3 25%, #ffb8b8 80%, #f89494 100%);
+}
+
+.xp-button-liked:active {
+  background: linear-gradient(180deg, #e68080 0%, #f89494 60%, #ffd6d6 100%);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* Campos de Formulario Hundidos (Inset Inputs) */
+.xp-input,
+.xp-textarea,
+.xp-select {
+  background-color: #ffffff;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: #0c0c0c;
+  width: 100%;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.xp-input:focus,
+.xp-textarea:focus,
+.xp-select:focus {
+  border-color: #1c52b0;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.35), 0 0 3px rgba(28, 82, 176, 0.5);
+}
+
+.xp-input-file {
+  font-size: 12px;
+  color: #0c0c0c;
+  width: 100%;
+}
+
+.xp-input-file::file-selector-button {
+  background: linear-gradient(180deg, #ffffff 0%, #ece9d8 25%, #dfdcd1 80%, #cbc7b7 100%);
+  border: 1px solid #003c74;
+  border-radius: 2px;
+  color: #0c0c0c;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  margin-right: 8px;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+
+.xp-input-file::file-selector-button:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fbe0a0 25%, #f7cf72 80%, #f1be43 100%);
+  border-color: #f19e11;
+}
+
+/* Pestañas (Tabs) */
+.xp-tab-container {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+}
+
+.xp-tab-button {
+  background: linear-gradient(180deg, #f5f4ea 0%, #e3dfd3 100%);
+  border: 1px solid #919b9c;
+  border-bottom: none;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: #333333;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+  top: 1px;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+
+.xp-tab-button:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.xp-tab-button.active {
+  background: #ffffff;
+  color: #0c2040;
+  font-weight: bold;
+  border-color: #7f9db9;
+  border-top: 2px solid #e67300;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  z-index: 2;
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+
+/* Paneles de Contenido y Barra de Herramientas */
+.xp-panel {
+  background-color: var(--xp-window-bg);
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 8px;
+}
+
+.xp-toolbar-panel {
+  background: linear-gradient(180deg, #f8f7f2 0%, #ece9d8 100%);
+  border: 1px solid #7f9db9;
+  border-radius: 3px;
+  padding: 8px 12px;
+  box-shadow: inset 1px 1px 0 #ffffff, 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.xp-inset-box {
+  background-color: #ffffff;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+}
+
+/* GroupBox XP */
+.xp-groupbox {
+  border: 1px solid #d0ccba;
+  border-radius: 4px;
+  padding: 8px 10px 10px 10px;
+  margin: 6px 0;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.xp-groupbox-legend {
+  font-size: 11px;
+  font-weight: bold;
+  color: #003399;
+  padding: 0 4px;
+  margin-left: 4px;
+}
+
+/* Barra de Menú XP (MenuBar) */
+.xp-menubar {
+  display: flex;
+  align-items: center;
+  background-color: var(--xp-window-bg);
+  border-bottom: 1px solid #d0ccba;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #0c0c0c;
+  gap: 8px;
+  user-select: none;
+}
+
+.xp-menubar-item {
+  padding: 2px 6px;
+  border-radius: 2px;
+  cursor: default;
+}
+
+.xp-menubar-item:hover {
+  background-color: #316ac5;
+  color: #ffffff;
+}
+
+/* Barra de Dirección XP (AddressBar) */
+.xp-addressbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background-color: var(--xp-window-bg);
+  border-bottom: 1px solid #d0ccba;
+  font-size: 11px;
+}
+
+.xp-addressbar-label {
+  color: #555555;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.xp-addressbar-input {
+  background: #ffffff;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #0c0c0c;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Barra de Estado XP (StatusBar) */
+.xp-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, #f0ede0 0%, #ece9d8 100%);
+  border-top: 1px solid #d0ccba;
+  padding: 3px 6px;
+  font-size: 11px;
+  color: #444444;
+  box-shadow: inset 0 1px 0 #ffffff;
+  min-height: 24px;
+}
+
+.xp-statusbar-panel {
+  border: 1px solid #7f9db9;
+  border-top-color: #a09c8d;
+  border-left-color: #a09c8d;
+  background: #fbfaf6;
+  padding: 1px 6px;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Banner Asistente / Wizard XP */
+.xp-wizard-banner {
+  background: linear-gradient(180deg, #ffffff 0%, #eaedf4 100%);
+  border-bottom: 1px solid #7f9db9;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.xp-wizard-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--xp-text-navy);
+  margin: 0;
+}
+
+.xp-wizard-subtitle {
+  font-size: 11px;
+  color: var(--xp-text-muted);
+  margin: 2px 0 0 0;
+}
+
+/* Separador 3D XP */
+.xp-separator {
+  height: 2px;
+  border-top: 1px solid #a09c8d;
+  border-bottom: 1px solid #ffffff;
+  margin: 8px 0;
+}
+
+/* Alertas & Mensajes de Error */
+.xp-alert-error {
+  background-color: #fdf2f2;
+  border: 1px solid #e06c6c;
+  border-radius: 2px;
+  padding: 8px 10px;
+  color: #990000;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+
+.xp-error-text {
+  color: #cc0000;
+  font-size: 10.5px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+/* Barra de Tareas (Taskbar) */
+.xp-taskbar {
+  background: linear-gradient(180deg, #1f4299 0%, #245edb 10%, #3a82f7 20%, #245edb 70%, #1941a5 100%);
+  border-top: 2px solid #3c8efc;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.35);
+  z-index: 40;
+}
+
+.xp-task-button {
+  background: linear-gradient(180deg, #3c8efc 0%, #1e5dd1 35%, #184db5 70%, #2264df 100%);
+  border: 1px solid #0c2d7a;
+  border-radius: 3px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: bold;
+  height: 32px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.45), 0 1px 2px rgba(0,0,0,0.3);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+  transition: all 0.1s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.xp-task-button:hover {
+  background: linear-gradient(180deg, #5ba3fc 0%, #2c6ee6 35%, #205ac2 70%, #3074ed 100%);
+}
+
+.xp-task-button.active,
+.xp-task-button:active {
+  background: linear-gradient(180deg, #133a8c 0%, #1748aa 40%, #1c52b8 100%);
+  border-color: #081d52;
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.7);
+  border-bottom: 2px solid #e67300;
+}
+
+/* Spinner Clásico XP */
+.xp-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #b2cbed;
+  border-top-color: #0055ea;
+  border-radius: 50%;
+  animation: xp-spin 0.8s linear infinite;
+}
+
+@keyframes xp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbars estilizadas XP para contenedores internos */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1efe2;
+  border: 1px solid #d4d0c2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ffffff 0%, #ece9d8 30%, #dfdcd1 80%, #cbc7b7 100%);
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fbe0a0 30%, #f7cf72 80%, #f1be43 100%);
 }
