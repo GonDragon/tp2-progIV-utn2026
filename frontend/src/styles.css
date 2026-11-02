@@ -12,3 +12,10 @@
 * {
     font-family: 'Happy Monkey', sans-serif;
 }
+
+main {
+    background-image: url('/img/XP-Wallpaper.jpg')!important;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
