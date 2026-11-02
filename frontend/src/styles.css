@@ -1,3 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: 'Happy Monkey';
+    src: url('/fonts/HappyMonkey-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 
 @import 'tailwindcss';
+
+* {
+    font-family: 'Happy Monkey', sans-serif;
+}
