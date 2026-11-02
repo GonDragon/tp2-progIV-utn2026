@@ -28,10 +28,10 @@
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
 
-            @if (errorLogin) {
+            @if (errorLogin()) {
                 <div class="xp-alert-error">
                     <span>⚠️</span>
-                    <span>{{ errorLogin }}</span>
+                    <span>{{ errorLogin() }}</span>
                 </div>
             }
 
@@ -81,9 +81,8 @@
             <div class="login-actions">
                 <button
                         type="submit"
-                        [disabled]="loginForm.invalid || cargando"
                         class="xp-button xp-button-primary xp-button-block">
-                    @if (cargando) {
+                    @if (cargando()) {
                         <span>Iniciando sesión...</span>
                     } @else {
                         <span>Aceptar</span>
