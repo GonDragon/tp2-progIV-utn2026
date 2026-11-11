@@ -10,6 +10,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AutenticacionService } from '../../services/autenticacion';
 import { ImgService } from '../../services/img';
 import { HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 // Validador personalizado para confirmar que las contraseñas coincidan
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -70,8 +71,10 @@ export class Registro {
       this.imgService.upload(file).subscribe({
         next: (res) => {
           this.subiendoImagen = false;
+          const apiBaseUrl = (environment.URL_BACKEND || '/api').replace(/\/+$/, '');
+          const imgUrl = res.url.startsWith('/') ? res.url : `/${res.url}`;
           this.registroForm.patchValue({
-            urlFoto: res.url,
+            urlFoto: `${apiBaseUrl}${imgUrl}`,
           });
           this.cdr.detectChanges();
         },
@@ -98,6 +101,13 @@ export class Registro {
     // Extraemos los valores. repetirContrasenia se ignora para el payload
     const formValue = this.registroForm.value;
 
+    let urlFoto = formValue.urlFoto || '';
+    if (urlFoto && !urlFoto.startsWith('http://') && !urlFoto.startsWith('https://')) {
+      const apiBaseUrl = (environment.URL_BACKEND || '/api').replace(/\/+$/, '');
+      const imgUrl = urlFoto.startsWith('/') ? urlFoto : `/${urlFoto}`;
+      urlFoto = `${apiBaseUrl}${imgUrl}`;
+    }
+
     const payload = {
       nombre: formValue.nombre!,
       apellido: formValue.apellido!,
@@ -106,7 +116,7 @@ export class Registro {
       password: formValue.password!,
       fechaNacimiento: formValue.fechaNacimiento!,
       descripcion: formValue.descripcion!,
-      urlFoto: formValue.urlFoto || '',
+      urlFoto,
       perfil: formValue.perfil || 'usuario',
     };
 
