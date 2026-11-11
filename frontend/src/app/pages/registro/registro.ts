@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AutenticacionService } from '../../services/autenticacion';
+import { ImgService } from '../../services/img';
 import { HttpErrorResponse } from '@angular/common/http';
 
 // Validador personalizado para confirmar que las contraseñas coincidan
@@ -26,11 +27,14 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
 export class Registro {
   private fb = inject(FormBuilder);
   private authService = inject(AutenticacionService);
+  private imgService = inject(ImgService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
   cargando = false;
+  subiendoImagen = false;
   errorRegistro = '';
+  errorImagen = '';
 
   registroForm = this.fb.group(
     {
@@ -50,24 +54,40 @@ export class Registro {
       fechaNacimiento: ['', [Validators.required]],
       descripcion: ['', [Validators.required, Validators.maxLength(250)]],
       perfil: ['usuario'], // Campo oculto con valor por defecto
-      urlFoto: [''], // El input file actualizará esto de forma decorativa por ahora
+      urlFoto: [''],
     },
     { validators: passwordsMatchValidator },
   );
 
-  // Placeholder del INPUT File
   onFileChange(event: Event) {
     const element = event.target as HTMLInputElement;
     if (element.files && element.files.length > 0) {
-      // Como es decorativo de momento, solo simulamos capturar un nombre o URL local
-      this.registroForm.patchValue({
-        urlFoto: element.files[0].name,
+      const file = element.files[0];
+      this.subiendoImagen = true;
+      this.errorImagen = '';
+      this.cdr.detectChanges();
+
+      this.imgService.upload(file).subscribe({
+        next: (res) => {
+          this.subiendoImagen = false;
+          this.registroForm.patchValue({
+            urlFoto: res.url,
+          });
+          this.cdr.detectChanges();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.subiendoImagen = false;
+          this.errorImagen =
+            err.error?.message || 'Error al subir la imagen de perfil.';
+          this.cdr.detectChanges();
+          console.error('Error al subir imagen:', err);
+        },
       });
     }
   }
 
   onSubmit() {
-    if (this.registroForm.invalid) {
+    if (this.registroForm.invalid || this.subiendoImagen) {
       this.registroForm.markAllAsTouched();
       return;
     }

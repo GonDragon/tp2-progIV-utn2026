@@ -108,7 +108,16 @@
                 <!-- Imagen de Perfil (File) -->
                 <div class="registro-field-full">
                     <label for="imagenPerfil" class="registro-label">Imagen de Perfil:</label>
-                    <input id="imagenPerfil" type="file" accept="image/*" (change)="onFileChange($event)" class="xp-input-file">
+                    <input id="imagenPerfil" type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileChange($event)" class="xp-input-file">
+                    @if (subiendoImagen) {
+                        <p class="xp-error-text" style="color: var(--xp-text-blue);">Subiendo imagen...</p>
+                    }
+                    @if (errorImagen) {
+                        <p class="xp-error-text">{{ errorImagen }}</p>
+                    }
+                    @if (registroForm.get('urlFoto')?.value && !subiendoImagen) {
+                        <p class="xp-error-text" style="color: #2e7d32;">✓ Imagen cargada con éxito</p>
+                    }
                 </div>
 
                 <!-- Descripción Breve -->
@@ -130,10 +139,12 @@
             <div class="registro-actions">
                 <button
                         type="submit"
-                        [disabled]="registroForm.invalid || cargando"
+                        [disabled]="registroForm.invalid || cargando || subiendoImagen"
                         class="xp-button xp-button-primary xp-button-block">
                     @if (cargando) {
                         <span>Registrando...</span>
+                    } @else if (subiendoImagen) {
+                        <span>Subiendo imagen...</span>
                     } @else {
                         <span>Siguiente > Registrarse</span>
                     }

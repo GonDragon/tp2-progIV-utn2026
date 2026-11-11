@@ -15,17 +15,19 @@ export class Backend {
   /**
    * Genera los headers para cada petición, inyectando el JWT si existe.
    */
-  private getHeaders(): HttpHeaders {
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
+  private getHeaders(isFormData: boolean = false): HttpHeaders {
+    let headers = new HttpHeaders();
+
+    if (!isFormData) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
 
     // Se asume que el token se guarda en localStorage tras el login.
     // Ajusta la clave 'jwt_token' según tu implementación.
     const token = localStorage.getItem('jwt_token');
 
     if (token) {
-      headers = headers.append('Authorization', `Bearer ${token}`);
+      headers = headers.set('Authorization', `Bearer ${token}`);
     }
 
     return headers;
@@ -36,15 +38,18 @@ export class Backend {
   }
 
   public post<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() });
+    const isFormData = body instanceof FormData;
+    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders(isFormData) });
   }
 
   public put<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() });
+    const isFormData = body instanceof FormData;
+    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders(isFormData) });
   }
 
   public patch<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() });
+    const isFormData = body instanceof FormData;
+    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders(isFormData) });
   }
 
   public delete<T>(endpoint: string): Observable<T> {
