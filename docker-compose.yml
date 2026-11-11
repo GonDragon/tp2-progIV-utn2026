@@ -23,6 +23,9 @@ services:
       - .env
     environment:
       - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@database:27017
+    volumes:
+      # Monta la carpeta local ./data dentro del contenedor
+      - ./data:/usr/src/app/data:Z
     depends_on:
       - database
     restart: unless-stopped
