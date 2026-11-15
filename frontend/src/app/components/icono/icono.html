@@ -1,0 +1,43 @@
+<div class="xp-icono" tabindex="0">
+    <div class="xp-icono-imagen-container">
+        <img
+                class="xp-icono-imagen"
+                [src]="publicacion.url_imagen"
+                [alt]="publicacion.titulo"
+        />
+
+        @if (puedeEliminar) {
+            <button
+                    type="button"
+                    class="xp-accion-overlay xp-btn-eliminar"
+                    title="Eliminar publicación"
+                    (click)="confirmarEliminar($event)"
+            >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                            d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6h12zM10 11v6M14 11v6"
+                    />
+                </svg>
+            </button>
+        }
+
+        <button
+                type="button"
+                class="xp-accion-overlay xp-btn-like"
+                [class.likeado]="leGusta"
+                [title]="leGusta ? 'Quitar me gusta' : 'Dar me gusta'"
+                (click)="toggleLike($event)"
+        >
+            <svg class="xp-corazon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                />
+            </svg>
+            <span class="xp-likes-numero">{{ publicacion.likes }}</span>
+        </button>
+    </div>
+
+    <span class="xp-icono-titulo" [title]="publicacion.titulo">
+    {{ publicacion.titulo }}
+  </span>
+</div>

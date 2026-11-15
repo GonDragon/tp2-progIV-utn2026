@@ -92,7 +92,7 @@
 
       <!-- Grilla de Publicaciones -->
       <div *ngIf="!cargando && publicaciones.length > 0" class="publicaciones-grid">
-        <app-publicacion
+        <app-icono
           *ngFor="let pub of publicaciones"
           [publicacion]="pub"
           [usuarioActual]="usuarioActual"

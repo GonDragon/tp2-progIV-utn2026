@@ -206,7 +206,7 @@
 
         <!-- Listado de Publicaciones -->
         <div *ngIf="!cargandoPublicaciones && publicaciones.length > 0" class="perfil-posts-grid">
-          <app-publicacion
+          <app-icono
             *ngFor="let pub of publicaciones"
             [publicacion]="pub"
             [usuarioActual]="usuarioActual"

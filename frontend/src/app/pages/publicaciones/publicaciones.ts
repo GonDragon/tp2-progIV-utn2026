@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PublicacionComponent } from '../../components/publicacion/publicacion';
+import { IconoComponent } from '../../components/icono/icono';
 import {
   PublicacionesService,
   PublicacionItem,
@@ -14,7 +14,7 @@ import { Notificacion } from '../../services/notificacion';
 @Component({
   selector: 'app-publicaciones',
   standalone: true,
-  imports: [CommonModule, PublicacionComponent],
+  imports: [CommonModule, IconoComponent],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })

@@ -1,0 +1,135 @@
+.xp-icono {
+    width: 96px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Tahoma', 'Segoe UI', sans-serif;
+    outline: none;
+}
+
+.xp-icono-imagen-container {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.xp-icono-imagen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.45);
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: filter 0.1s ease;
+}
+
+.xp-icono:focus-within .xp-icono-imagen {
+    filter: sepia(100%) hue-rotate(190deg) saturate(250%) brightness(0.9);
+}
+
+.xp-accion-overlay {
+    position: absolute;
+    bottom: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 3px;
+    background: rgba(15, 23, 42, 0.72);
+    color: #ffffff;
+    padding: 2px 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+.xp-accion-overlay:hover {
+    transform: scale(1.08);
+    background: rgba(15, 23, 42, 0.92);
+}
+
+.xp-btn-eliminar {
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    padding: 3px;
+}
+
+.xp-btn-eliminar svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: #fca5a5;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.xp-btn-eliminar:hover svg {
+    stroke: #ef4444;
+}
+
+.xp-btn-like {
+    right: 2px;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 24px;
+    padding: 2px 4px;
+}
+
+.xp-corazon {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2.2;
+}
+
+.xp-btn-like.likeado .xp-corazon {
+    fill: #ff3b3b;
+    stroke: #ff3b3b;
+}
+
+.xp-likes-numero {
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    color: #ffffff;
+    text-shadow: 1px 1px 1px #000000;
+}
+
+.xp-icono-titulo {
+    max-width: 100%;
+    padding: 1px 4px;
+    font-size: 11px;
+    line-height: 1.25;
+    color: #ffffff;
+    text-align: center;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-shadow:
+            1px 1px 1px #000000,
+            -1px -1px 1px rgba(0, 0, 0, 0.75);
+}
+
+.xp-icono:hover .xp-icono-titulo {
+    text-decoration: underline;
+}
+
+.xp-icono:focus-within .xp-icono-titulo {
+    background-color: #0b61ff;
+    outline: 1px dotted #ffff00;
+    text-shadow: none;
+    text-decoration: none;
+    -webkit-line-clamp: unset;
+}

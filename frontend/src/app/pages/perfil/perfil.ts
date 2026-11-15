@@ -12,12 +12,12 @@ import {
   UsuarioToken,
 } from '../../services/autenticacion';
 import { Notificacion } from '../../services/notificacion';
-import { PublicacionComponent } from '../../components/publicacion/publicacion';
+import { IconoComponent } from '../../components/icono/icono';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, PublicacionComponent],
+  imports: [CommonModule, RouterLink, IconoComponent],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -147,9 +147,7 @@ export class Perfil implements OnInit, OnDestroy {
   getIniciales(): string {
     if (!this.usuario) return '?';
     if (this.usuario.nombre && this.usuario.apellido) {
-      return (
-        this.usuario.nombre.charAt(0) + this.usuario.apellido.charAt(0)
-      ).toUpperCase();
+      return (this.usuario.nombre.charAt(0) + this.usuario.apellido.charAt(0)).toUpperCase();
     }
     if (this.usuario.nombre) {
       return this.usuario.nombre.charAt(0).toUpperCase();
