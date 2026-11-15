@@ -24,6 +24,10 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './registro.html',
+  host: {
+    style:
+      'display: flex; margin: auto!important; max-width: 600px; min-height: 100%; justify-content: center; align-items: center; flex-direction: column;',
+  },
 })
 export class Registro {
   private fb = inject(FormBuilder);
@@ -80,8 +84,7 @@ export class Registro {
         },
         error: (err: HttpErrorResponse) => {
           this.subiendoImagen = false;
-          this.errorImagen =
-            err.error?.message || 'Error al subir la imagen de perfil.';
+          this.errorImagen = err.error?.message || 'Error al subir la imagen de perfil.';
           this.cdr.detectChanges();
           console.error('Error al subir imagen:', err);
         },

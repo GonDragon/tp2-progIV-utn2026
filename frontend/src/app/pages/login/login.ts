@@ -9,7 +9,8 @@ import { AutenticacionService } from '../../services/autenticacion';
   imports: [ReactiveFormsModule],
   templateUrl: './login.html',
   host: {
-    style: 'display: block; margin: auto!important; max-width: 400px',
+    style:
+      'display: flex; margin: auto!important; max-width: 600px; min-height: 100%; justify-content: center; align-items: center; flex-direction: column;',
   },
 })
 export class Login {
