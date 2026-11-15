@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { PublicacionItem } from '../../services/publicaciones';
 import { UsuarioToken } from '../../services/autenticacion';
 
@@ -8,6 +9,8 @@ import { UsuarioToken } from '../../services/autenticacion';
   styleUrl: './icono.css',
 })
 export class IconoComponent {
+  private router = inject(Router);
+
   @Input({ required: true }) publicacion!: PublicacionItem;
   @Input() usuarioActual: UsuarioToken | null = null;
   @Input() leGusta: boolean = false;
@@ -27,6 +30,12 @@ export class IconoComponent {
     const esAdmin = this.usuarioActual.rol === 'admin';
 
     return esAutor || esAdmin;
+  }
+
+  abrirPublicacion(): void {
+    this.router.navigate(['/publicaciones'], {
+      queryParams: { id: this.publicacion._id },
+    });
   }
 
   toggleLike(event?: Event): void {

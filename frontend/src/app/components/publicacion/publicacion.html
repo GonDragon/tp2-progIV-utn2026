@@ -12,23 +12,16 @@
 
       <div class="xp-window-controls">
         <span class="publicacion-header-date">{{ publicacion.createdAt | date:'dd/MM/yy HH:mm' }}</span>
-
-        <!-- Botón Eliminar estilo botón de cerrar '✕' de XP si puede eliminar -->
+        <span class="xp-win-btn xp-win-btn-default">_</span>
+        <span class="xp-win-btn xp-win-btn-default">□</span>
         <button
-          *ngIf="puedeEliminar"
           type="button"
-          (click)="confirmarEliminar()"
+          (click)="cerrarModal()"
           class="xp-win-btn xp-win-btn-close"
-          title="Eliminar publicación"
+          title="Cerrar"
         >
           ✕
         </button>
-
-        <!-- Botones decorativos de ventana si no es botón de eliminar -->
-        <div *ngIf="!puedeEliminar" class="xp-window-controls">
-          <span class="xp-win-btn xp-win-btn-default">_</span>
-          <span class="xp-win-btn xp-win-btn-default">□</span>
-        </div>
       </div>
     </div>
 

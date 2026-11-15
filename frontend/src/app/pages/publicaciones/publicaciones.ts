@@ -1,6 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { IconoComponent } from '../../components/icono/icono';
+import { PublicacionComponent } from '../../components/publicacion/publicacion';
 import {
   PublicacionesService,
   PublicacionItem,
@@ -14,15 +17,17 @@ import { Notificacion } from '../../services/notificacion';
 @Component({
   selector: 'app-publicaciones',
   standalone: true,
-  imports: [CommonModule, IconoComponent],
+  imports: [CommonModule, IconoComponent, PublicacionComponent],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
-export class Publicaciones implements OnInit {
+export class Publicaciones implements OnInit, OnDestroy {
   private publicacionesService = inject(PublicacionesService);
   private authService = inject(AutenticacionService);
   private notificacion = inject(Notificacion);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   publicaciones: PublicacionItem[] = [];
   cargando = false;
@@ -34,10 +39,70 @@ export class Publicaciones implements OnInit {
   usuarioActual: UsuarioToken | null = null;
   likesLocales: Set<string> = new Set<string>();
 
+  publicacionModal: PublicacionItem | null = null;
+  cargandoModal = false;
+  private routeSub?: Subscription;
+
+  @HostListener('document:keydown.escape')
+  onEscapePress(): void {
+    if (this.publicacionModal || this.cargandoModal) {
+      this.cerrarModal();
+    }
+  }
+
   ngOnInit(): void {
     this.usuarioActual = this.authService.getUsuarioActual();
     this.cargarLikesLocales();
     this.cargarPublicaciones();
+
+    this.routeSub = this.route.queryParamMap.subscribe((params) => {
+      const pubId = params.get('id');
+      if (pubId) {
+        if (this.publicacionModal?._id === pubId) {
+          return;
+        }
+        const encontrada = this.publicaciones.find((p) => p._id === pubId);
+        if (encontrada) {
+          this.publicacionModal = encontrada;
+          this.cargandoModal = false;
+          this.cdr.detectChanges();
+        } else {
+          this.cargandoModal = true;
+          this.publicacionModal = null;
+          this.cdr.detectChanges();
+          this.publicacionesService.getPublicacion(pubId).subscribe({
+            next: (data) => {
+              this.publicacionModal = data;
+              this.cargandoModal = false;
+              this.cdr.detectChanges();
+            },
+            error: (err) => {
+              this.cargandoModal = false;
+              this.publicacionModal = null;
+              this.notificacion.showWarning('No se encontró la publicación solicitada');
+              this.cerrarModal();
+              this.cdr.detectChanges();
+              console.error('Error al cargar publicación:', err);
+            },
+          });
+        }
+      } else {
+        this.publicacionModal = null;
+        this.cargandoModal = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.routeSub?.unsubscribe();
+  }
+
+  cerrarModal(): void {
+    this.router.navigate(['/publicaciones'], {
+      queryParams: { id: null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   cambiarOrden(nuevoOrden: 'fecha' | 'likes'): void {
@@ -98,6 +163,13 @@ export class Publicaciones implements OnInit {
         pub.likes += 1;
         this.likesLocales.add(pub._id);
         this.guardarLikesLocales();
+        const enLista = this.publicaciones.find((p) => p._id === pub._id);
+        if (enLista && enLista !== pub) {
+          enLista.likes = pub.likes;
+        }
+        if (this.publicacionModal && this.publicacionModal._id === pub._id && this.publicacionModal !== pub) {
+          this.publicacionModal.likes = pub.likes;
+        }
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -117,6 +189,13 @@ export class Publicaciones implements OnInit {
         pub.likes = Math.max(0, pub.likes - 1);
         this.likesLocales.delete(pub._id);
         this.guardarLikesLocales();
+        const enLista = this.publicaciones.find((p) => p._id === pub._id);
+        if (enLista && enLista !== pub) {
+          enLista.likes = pub.likes;
+        }
+        if (this.publicacionModal && this.publicacionModal._id === pub._id && this.publicacionModal !== pub) {
+          this.publicacionModal.likes = pub.likes;
+        }
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -130,6 +209,9 @@ export class Publicaciones implements OnInit {
       next: () => {
         this.notificacion.showInfo('Publicación eliminada correctamente');
         this.publicaciones = this.publicaciones.filter((p) => p._id !== pub._id);
+        if (this.publicacionModal?._id === pub._id) {
+          this.cerrarModal();
+        }
         if (this.publicaciones.length === 0 && this.paginaActual > 1) {
           this.paginaActual--;
           this.cargarPublicaciones();

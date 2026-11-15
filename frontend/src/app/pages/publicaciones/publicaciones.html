@@ -148,4 +148,45 @@
 
   </div>
 
+  <!-- Modal de Publicación XP -->
+  <div
+    *ngIf="publicacionModal || cargandoModal"
+    class="publicacion-modal-overlay"
+    (click)="cerrarModal()"
+  >
+    <div class="publicacion-modal-dialog" (click)="$event.stopPropagation()">
+      <div *ngIf="cargandoModal" class="xp-window publicacion-modal-loading">
+        <div class="xp-titlebar">
+          <div class="xp-titlebar-title">
+            <span>Cargando publicación...</span>
+          </div>
+          <div class="xp-window-controls">
+            <button
+              type="button"
+              class="xp-win-btn xp-win-btn-close"
+              (click)="cerrarModal()"
+              title="Cerrar"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+        <div class="publicacion-modal-loading-body">
+          <div class="xp-spinner"></div>
+          <p class="publicacion-modal-loading-text">Cargando publicación...</p>
+        </div>
+      </div>
+
+      <app-publicacion
+        *ngIf="publicacionModal && !cargandoModal"
+        [publicacion]="publicacionModal"
+        [usuarioActual]="usuarioActual"
+        [leGusta]="estaLikeada(publicacionModal._id)"
+        (like)="onDarLike($event)"
+        (quitarLike)="onQuitarLike($event)"
+        (cerrar)="cerrarModal()"
+      />
+    </div>
+  </div>
+
 </div>

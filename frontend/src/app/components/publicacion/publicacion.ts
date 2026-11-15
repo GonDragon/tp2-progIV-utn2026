@@ -17,21 +17,7 @@ export class PublicacionComponent {
 
   @Output() like = new EventEmitter<PublicacionItem>();
   @Output() quitarLike = new EventEmitter<PublicacionItem>();
-  @Output() eliminar = new EventEmitter<PublicacionItem>();
-
-  get puedeEliminar(): boolean {
-    if (!this.usuarioActual) return false;
-    const autorId =
-      typeof this.publicacion.autor === 'object' && this.publicacion.autor !== null
-        ? this.publicacion.autor._id
-        : (this.publicacion.autor as string);
-
-    const esAutor = autorId?.toString() === this.usuarioActual.sub?.toString();
-    const esAdmin =
-      this.usuarioActual.rol === 'administrador' || this.usuarioActual.rol === 'admin';
-
-    return esAutor || esAdmin;
-  }
+  @Output() cerrar = new EventEmitter<void>();
 
   get autorNombre(): string {
     if (typeof this.publicacion.autor === 'object' && this.publicacion.autor !== null) {
@@ -59,9 +45,7 @@ export class PublicacionComponent {
     }
   }
 
-  confirmarEliminar(): void {
-    if (confirm('¿Estás seguro de que deseas eliminar esta publicación?')) {
-      this.eliminar.emit(this.publicacion);
-    }
+  cerrarModal(): void {
+    this.cerrar.emit();
   }
 }
