@@ -72,6 +72,31 @@ export class PublicacionesService {
     return this.backend.get<{ cantidad: number }>(endpoint);
   }
 
+  public getCantidadComentarios(query: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    usuario?: string;
+    id_publicacion?: string;
+  } = {}): Observable<{ cantidad: number }> {
+    const params = new URLSearchParams();
+    if (query.fecha_inicio) {
+      params.append('fecha_inicio', query.fecha_inicio);
+    }
+    if (query.fecha_fin) {
+      params.append('fecha_fin', query.fecha_fin);
+    }
+    if (query.usuario) {
+      params.append('usuario', query.usuario);
+    }
+    if (query.id_publicacion) {
+      params.append('id_publicacion', query.id_publicacion);
+    }
+
+    const queryString = params.toString();
+    const endpoint = queryString ? `/pubs/cantidadcomments?${queryString}` : '/pubs/cantidadcomments';
+    return this.backend.get<{ cantidad: number }>(endpoint);
+  }
+
   public getPublicaciones(query: GetPublicacionesQuery = {}): Observable<PublicacionItem[]> {
     const params = new URLSearchParams();
     if (query.orderBy) {

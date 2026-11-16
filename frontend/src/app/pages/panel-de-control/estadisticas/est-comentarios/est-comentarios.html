@@ -1,1 +1,111 @@
-<p>est-comentarios works!</p>
+<div class="est-comentarios-container">
+  <!-- Barra de Filtros -->
+  <div class="est-filtros-bar">
+    <div class="filtro-item">
+      <label for="fecha-inicio" class="filtro-label">Fecha Inicio:</label>
+      <input
+        id="fecha-inicio"
+        type="date"
+        class="xp-input"
+        [(ngModel)]="fechaInicio"
+        [disabled]="cargando"
+      />
+    </div>
+
+    <div class="filtro-item">
+      <label for="fecha-fin" class="filtro-label">Fecha Fin:</label>
+      <input
+        id="fecha-fin"
+        type="date"
+        class="xp-input"
+        [(ngModel)]="fechaFin"
+        [disabled]="cargando"
+      />
+    </div>
+
+    <div class="filtro-item">
+      <label for="intervalo" class="filtro-label">Intervalo:</label>
+      <select
+        id="intervalo"
+        class="xp-select"
+        [(ngModel)]="intervalo"
+        (change)="onIntervaloChange()"
+        [disabled]="cargando"
+      >
+        <option value="hora">Hora</option>
+        <option value="dia">Día</option>
+        <option value="mes">Mes</option>
+      </select>
+    </div>
+
+    <div class="filtro-item">
+      <label for="usuario-filtro" class="filtro-label">Usuario (opcional):</label>
+      <input
+        id="usuario-filtro"
+        type="text"
+        placeholder="Todos"
+        class="xp-input usuario-input"
+        [(ngModel)]="usuarioFiltro"
+        [disabled]="cargando"
+      />
+    </div>
+
+    <div class="filtro-acciones">
+      <button
+        type="button"
+        class="xp-button xp-button-primary"
+        (click)="consultarEstadisticas()"
+        [disabled]="cargando"
+      >
+        <span>{{ cargando ? 'Consultando...' : 'Consultar' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Alerta de Error si ocurre -->
+  <div *ngIf="errorMensaje" class="xp-alert-error">
+    <span>⚠️</span>
+    <span>{{ errorMensaje }}</span>
+  </div>
+
+  <!-- Métricas Rápidas -->
+  <div class="est-metricas-grid" *ngIf="!cargando && !errorMensaje">
+    <div class="metrica-card">
+      <span class="metrica-titulo">Total Comentarios</span>
+      <span class="metrica-valor">{{ totalComentarios }}</span>
+    </div>
+    <div class="metrica-card">
+      <span class="metrica-titulo">Promedio / {{ intervalo }}</span>
+      <span class="metrica-valor">{{ promedioPorIntervalo }}</span>
+    </div>
+    <div class="metrica-card">
+      <span class="metrica-titulo">Pico Máximo</span>
+      <span class="metrica-valor">{{ maxComentariosEnPunto }}</span>
+    </div>
+  </div>
+
+  <!-- Contenedor del Gráfico -->
+  <div class="est-chart-frame">
+    <!-- Estado de Carga -->
+    <div *ngIf="cargando" class="est-loading-overlay">
+      <div class="xp-spinner"></div>
+      <span class="loading-text">Consultando comentarios del período...</span>
+    </div>
+
+    <!-- Gráfico ApexCharts -->
+    <div *ngIf="!cargando && chartOptions" class="est-chart-wrapper">
+      <apx-chart
+        [series]="chartOptions.series!"
+        [chart]="chartOptions.chart!"
+        [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!"
+        [stroke]="chartOptions.stroke!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [plotOptions]="chartOptions.plotOptions!"
+        [grid]="chartOptions.grid!"
+        [tooltip]="chartOptions.tooltip!"
+        [colors]="chartOptions.colors!"
+      ></apx-chart>
+    </div>
+  </div>
+</div>
