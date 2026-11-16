@@ -7,5 +7,5 @@ export class CreateUsuarioDto {
   fechaNacimiento: string;
   descripcion: string;
   urlFoto: string;
-  perfil: string;
+  rol: string;
 }
