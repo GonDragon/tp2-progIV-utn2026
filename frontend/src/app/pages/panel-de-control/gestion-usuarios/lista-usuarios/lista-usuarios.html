@@ -1,1 +1,92 @@
-<p>lista-usuarios works!</p>
+<div class="lista-usuarios-container">
+  <!-- Contenedor con Scroll de Usuarios -->
+  <div class="usuarios-scroll-area">
+    <!-- Spinner de carga -->
+    <div *ngIf="cargando" class="usuarios-loading">
+      <div class="xp-spinner"></div>
+      <span class="loading-text">Cargando usuarios...</span>
+    </div>
+
+    <!-- Lista vacía -->
+    <div *ngIf="!cargando && usuarios.length === 0" class="usuarios-vacio">
+      <span>No se encontraron usuarios en esta página.</span>
+    </div>
+
+    <!-- Lista de usuarios -->
+    <div *ngIf="!cargando && usuarios.length > 0" class="usuarios-lista">
+      <div *ngFor="let usuario of usuarios" class="usuario-item">
+        <!-- Izquierda: Avatar y Nombres -->
+        <div class="usuario-info-left">
+          <div class="usuario-avatar-frame">
+            <img
+              *ngIf="usuario.urlFoto && !failedImages.has(usuario.username)"
+              [src]="usuario.urlFoto"
+              [alt]="usuario.username"
+              (error)="onImageError(usuario.username)"
+              class="usuario-avatar-img"
+            />
+            <div
+              *ngIf="!usuario.urlFoto || failedImages.has(usuario.username)"
+              class="usuario-avatar-fallback select-none"
+            >
+              {{ getIniciales(usuario) }}
+            </div>
+          </div>
+
+          <div class="usuario-datos">
+              <a href="/perfil/{{ usuario.username }}"><span class="usuario-username">{{ usuario.username }}</span></a>
+            <span class="usuario-nombre-real">{{ getNombreCompleto(usuario) }}</span>
+          </div>
+        </div>
+
+        <!-- Derecha: Toggle Habilitar/Deshabilitar y Punto Brillante -->
+        <div class="usuario-acciones-right">
+          <label
+            class="xp-toggle-switch"
+            [title]="isHabilitado(usuario) ? 'Deshabilitar ' + usuario.username : 'Habilitar ' + usuario.username"
+          >
+            <input
+              type="checkbox"
+              [checked]="isHabilitado(usuario)"
+              [disabled]="togglingUsernames.has(usuario.username)"
+              (change)="toggleHabilitado(usuario)"
+            />
+            <span class="xp-toggle-slider"></span>
+          </label>
+
+          <span
+            class="status-dot"
+            [class.dot-active]="isHabilitado(usuario)"
+            [class.dot-inactive]="!isHabilitado(usuario)"
+            [title]="isHabilitado(usuario) ? 'Habilitado' : 'Deshabilitado'"
+          ></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles de Paginación (Por fuera del Scroll) -->
+  <div class="paginacion-bar">
+    <div class="paginacion-info">
+      <span>Página {{ pagina }}</span>
+    </div>
+    <div class="paginacion-buttons">
+      <button
+        type="button"
+        class="xp-button"
+        [disabled]="cargando || pagina <= 1"
+        (click)="paginaAnterior()"
+      >
+        ◀ Anterior
+      </button>
+      <button
+        type="button"
+        class="xp-button"
+        [disabled]="cargando || usuarios.length < limite"
+        (click)="paginaSiguiente()"
+      >
+        Siguiente ▶
+      </button>
+    </div>
+  </div>
+</div>
