@@ -1,1 +1,132 @@
-<p>alta-usuario works!</p>
+<div class="alta-usuario-container">
+  <form [formGroup]="altaForm" (ngSubmit)="onSubmit()" class="alta-usuario-form">
+
+    @if (errorAlta) {
+      <div class="xp-alert-error">
+        <span>⚠️</span>
+        <span>{{ errorAlta }}</span>
+      </div>
+    }
+
+    <div class="alta-fields-grid">
+      <!-- Nombre -->
+      <div>
+        <label for="alta-nombre" class="alta-label">Nombre:</label>
+        <input id="alta-nombre" type="text" formControlName="nombre" class="xp-input" />
+        @if (altaForm.get('nombre')?.invalid && altaForm.get('nombre')?.touched) {
+          <p class="xp-error-text">El nombre es requerido.</p>
+        }
+      </div>
+
+      <!-- Apellido -->
+      <div>
+        <label for="alta-apellido" class="alta-label">Apellido:</label>
+        <input id="alta-apellido" type="text" formControlName="apellido" class="xp-input" />
+        @if (altaForm.get('apellido')?.invalid && altaForm.get('apellido')?.touched) {
+          <p class="xp-error-text">El apellido es requerido.</p>
+        }
+      </div>
+
+      <!-- Correo -->
+      <div class="alta-field-full">
+        <label for="alta-email" class="alta-label">Correo Electrónico:</label>
+        <input id="alta-email" type="email" formControlName="email" class="xp-input" />
+        @if (altaForm.get('email')?.invalid && altaForm.get('email')?.touched) {
+          <p class="xp-error-text">Ingresa un correo válido.</p>
+        }
+      </div>
+
+      <!-- Nombre de Usuario y Checkbox Administrador -->
+      <div class="alta-field-full">
+        <div class="username-header">
+          <label for="alta-username" class="alta-label">Nombre de Usuario:</label>
+          <label class="alta-admin-checkbox" title="Asignar rol de Administrador">
+            <input type="checkbox" formControlName="esAdmin" />
+            <span>Administrador?</span>
+          </label>
+        </div>
+        <input id="alta-username" type="text" formControlName="username" class="xp-input" />
+        @if (altaForm.get('username')?.invalid && altaForm.get('username')?.touched) {
+          <p class="xp-error-text">El nombre de usuario es requerido.</p>
+        }
+      </div>
+
+      <!-- Contraseña -->
+      <div>
+        <label for="alta-password" class="alta-label">Contraseña:</label>
+        <input id="alta-password" type="password" formControlName="password" class="xp-input" />
+        @if (altaForm.get('password')?.invalid && altaForm.get('password')?.touched) {
+          <div class="xp-error-text">
+            @if (altaForm.get('password')?.hasError('required')) { <p>Es requerida.</p> }
+            @if (altaForm.get('password')?.hasError('minlength')) { <p>Mínimo 8 caracteres.</p> }
+            @if (altaForm.get('password')?.hasError('pattern')) { <p>Debe tener 1 mayúscula y 1 número.</p> }
+          </div>
+        }
+      </div>
+
+      <!-- Repetir Contraseña -->
+      <div>
+        <label for="alta-repetirContrasenia" class="alta-label">Repetir Contraseña:</label>
+        <input id="alta-repetirContrasenia" type="password" formControlName="repetirContrasenia" class="xp-input" />
+        @if (altaForm.hasError('passwordsMismatch') && altaForm.get('repetirContrasenia')?.touched) {
+          <p class="xp-error-text">Las contraseñas no coinciden.</p>
+        }
+      </div>
+
+      <!-- Fecha de Nacimiento -->
+      <div class="alta-field-full">
+        <label for="alta-fechaNacimiento" class="alta-label">Fecha de Nacimiento:</label>
+        <input id="alta-fechaNacimiento" type="date" formControlName="fechaNacimiento" class="xp-input" />
+        @if (altaForm.get('fechaNacimiento')?.invalid && altaForm.get('fechaNacimiento')?.touched) {
+          <p class="xp-error-text">La fecha es requerida.</p>
+        }
+      </div>
+
+      <!-- Imagen de Perfil (File) -->
+      <div class="alta-field-full">
+        <label for="alta-imagenPerfil" class="alta-label">Imagen de Perfil:</label>
+        <input id="alta-imagenPerfil" type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileChange($event)" class="xp-input-file" />
+        @if (subiendoImagen) {
+          <p class="xp-error-text" style="color: var(--xp-text-blue);">Subiendo imagen...</p>
+        }
+        @if (errorImagen) {
+          <p class="xp-error-text">{{ errorImagen }}</p>
+        }
+        @if (altaForm.get('urlFoto')?.value && !subiendoImagen) {
+          <p class="xp-error-text" style="color: #2e7d32;">✓ Imagen cargada con éxito</p>
+        }
+      </div>
+
+      <!-- Descripción Breve -->
+      <div class="alta-field-full">
+        <label for="alta-descripcion" class="alta-label">Descripción Breve:</label>
+        <textarea id="alta-descripcion" rows="3" formControlName="descripcion" class="xp-textarea resize-none"></textarea>
+        @if (altaForm.get('descripcion')?.invalid && altaForm.get('descripcion')?.touched) {
+          <p class="xp-error-text">La descripción es requerida (Máx 250 caracteres).</p>
+        }
+      </div>
+    </div>
+
+    <!-- Campo Oculto Perfil -->
+    <input type="hidden" formControlName="perfil" />
+
+    <!-- Separador 3D XP y acciones -->
+    <div class="xp-separator"></div>
+
+    <div class="alta-actions">
+      <button
+        type="submit"
+        [disabled]="altaForm.invalid || cargando || subiendoImagen"
+        class="xp-button xp-button-primary xp-button-block"
+      >
+        @if (cargando) {
+          <span>Creando usuario...</span>
+        } @else if (subiendoImagen) {
+          <span>Subiendo imagen...</span>
+        } @else {
+          <span>Crear Usuario</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>

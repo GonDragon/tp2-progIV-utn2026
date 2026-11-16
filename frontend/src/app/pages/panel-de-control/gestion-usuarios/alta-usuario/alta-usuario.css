@@ -1,0 +1,76 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.alta-usuario-container {
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 6px 10px;
+}
+
+.alta-usuario-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alta-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 500px) {
+  .alta-fields-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .alta-field-full {
+    grid-column: span 2;
+  }
+}
+
+.alta-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--xp-text-main);
+  margin-bottom: 4px;
+}
+
+.username-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.username-header .alta-label {
+  margin-bottom: 0;
+}
+
+.alta-admin-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--xp-text-main);
+  cursor: pointer;
+  user-select: none;
+}
+
+.alta-admin-checkbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.alta-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+}

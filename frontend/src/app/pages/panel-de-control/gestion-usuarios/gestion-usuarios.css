@@ -1,6 +1,6 @@
 .gestion-usuarios-window {
   width: 100%;
-  height: 520px;
+  height: 650px;
   max-height: 85vh;
   min-height: 400px;
   background-color: var(--xp-window-bg, #ece9d8);
