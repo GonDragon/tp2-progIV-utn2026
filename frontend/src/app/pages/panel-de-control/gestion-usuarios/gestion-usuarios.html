@@ -12,8 +12,34 @@
     </div>
   </div>
 
+  <!-- Pestañas de la ventana -->
+  <div class="gestion-usuarios-tabs">
+    <div class="xp-tab-container">
+      <button
+        type="button"
+        class="xp-tab-button"
+        [class.active]="tabActiva === 'lista'"
+        (click)="cambiarTab('lista')"
+      >
+        <img src="/img/iconos/lista-usuarios.png" alt="Lista de usuarios" class="xp-tab-icon" />
+        <span>Lista de usuarios</span>
+      </button>
+
+      <button
+        type="button"
+        class="xp-tab-button"
+        [class.active]="tabActiva === 'alta'"
+        (click)="cambiarTab('alta')"
+      >
+        <img src="/img/iconos/alta-usuario.png" alt="Alta de usuarios" class="xp-tab-icon" />
+        <span>Alta de usuarios</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Contenido de la ventana -->
   <div class="xp-window-content">
-    <!-- Ventana de Windows XP sin contenido inicial -->
+    <app-lista-usuarios *ngIf="tabActiva === 'lista'"></app-lista-usuarios>
+    <app-alta-usuario *ngIf="tabActiva === 'alta'"></app-alta-usuario>
   </div>
 </div>

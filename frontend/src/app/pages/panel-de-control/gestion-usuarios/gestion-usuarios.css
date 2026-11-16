@@ -1,12 +1,24 @@
 .gestion-usuarios-window {
   width: 100%;
-  min-height: 380px;
+  min-height: 400px;
   background-color: var(--xp-window-bg, #ece9d8);
   display: flex;
   flex-direction: column;
 }
 
 .xp-titlebar-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.gestion-usuarios-tabs {
+  padding: 8px 10px 0 10px;
+  background-color: var(--xp-window-bg, #ece9d8);
+  border-bottom: 1px solid #7f9db9;
+}
+
+.xp-tab-icon {
   width: 16px;
   height: 16px;
   object-fit: contain;

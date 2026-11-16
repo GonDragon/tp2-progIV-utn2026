@@ -1,4 +1,5 @@
 .publicaciones-container {
+  height: 100%;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
@@ -13,6 +14,7 @@
 
 .publicaciones-explorer {
   width: 100%;
+  height: 100%;
 }
 
 .publicaciones-refresh-btn {
@@ -69,6 +71,7 @@
   padding: 8px;
   background-color: var(--xp-window-bg);
   min-height: 260px;
+  height: 100%;
 }
 
 @media (min-width: 640px) {
