@@ -6,12 +6,13 @@ import {
   Param,
   UseGuards,
   Res,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { CreateUsuarioDto } from './dto/create-usuario.dto.js';
 import { AuthenticationDto } from './dto/authentication.dto.js';
 import { AuthGuard } from '../guards/auth.guard.js';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +34,25 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.login(loginAuthDto);
+    this.authService.setTokenCookie(res, result);
+    return { token: result };
+  }
+
+  @Post('autorizar')
+  async autorizar(
+    @Req() req: Request,
+    @Body() body: any,
+  ) {
+    return await this.authService.autorizar(req, body);
+  }
+
+  @Post('refrescar')
+  async refrescar(
+    @Req() req: Request,
+    @Body() body: any,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.refrescar(req, body);
     this.authService.setTokenCookie(res, result);
     return { token: result };
   }
