@@ -1,0 +1,104 @@
+<div class="publicacion-wrapper">
+    <!-- Asistente de Publicación / Diálogo estilo Windows XP Luna -->
+    <div class="xp-window publicacion-dialog">
+
+        <!-- Barra de Título -->
+        <div class="xp-titlebar">
+            <div class="xp-titlebar-title">
+                <span>Nueva Publicación - Patitas</span>
+            </div>
+
+            <!-- Botones Ventana -->
+            <div class="xp-window-controls">
+                <span class="xp-win-btn xp-win-btn-default">?</span>
+                <span class="xp-win-btn xp-win-btn-close">✕</span>
+            </div>
+        </div>
+
+        <!-- Banner superior estilo Wizard XP -->
+        <div class="xp-wizard-banner">
+            <div>
+                <h2 class="xp-wizard-title">Crear Nueva Publicación</h2>
+                <p class="xp-wizard-subtitle">Comparte una foto y un mensaje con la comunidad de Patitas.</p>
+            </div>
+            <div class="publicacion-wizard-icon">
+                🐾
+            </div>
+        </div>
+
+        <form [formGroup]="publicacionForm" (ngSubmit)="onSubmit()" class="publicacion-form">
+
+            @if (errorPublicacion) {
+                <div class="xp-alert-error">
+                    <span>⚠️</span>
+                    <span>{{ errorPublicacion }}</span>
+                </div>
+            }
+
+            <div class="publicacion-fields-grid">
+
+                <!-- Título de la Publicación -->
+                <div class="publicacion-field-full">
+                    <label for="titulo" class="publicacion-label">Título de la Publicación:</label>
+                    <input id="titulo" type="text" formControlName="titulo" class="xp-input" placeholder="Ej: Mi mascota jugando en el parque...">
+                    @if (publicacionForm.get('titulo')?.invalid && publicacionForm.get('titulo')?.touched) {
+                        <p class="xp-error-text">El título es requerido.</p>
+                    }
+                </div>
+
+                <!-- Imagen de la Publicación (Obligatoria) -->
+                <div class="publicacion-field-full">
+                    <label for="imagenPublicacion" class="publicacion-label">Imagen de la Publicación (Obligatoria):</label>
+                    <input id="imagenPublicacion" type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileChange($event)" class="xp-input-file">
+                    @if (subiendoImagen) {
+                        <p class="xp-error-text" style="color: var(--xp-text-blue);">Subiendo imagen...</p>
+                    }
+                    @if (errorImagen) {
+                        <p class="xp-error-text">{{ errorImagen }}</p>
+                    }
+                    @if (publicacionForm.get('url_imagen')?.value && !subiendoImagen) {
+                        <p class="xp-error-text" style="color: #2e7d32;">✓ Imagen cargada con éxito</p>
+                        <div class="publicacion-img-preview-container">
+                            <img [src]="publicacionForm.get('url_imagen')?.value" alt="Vista previa de publicación" class="publicacion-img-preview">
+                        </div>
+                    }
+                    @if (publicacionForm.get('url_imagen')?.invalid && publicacionForm.get('url_imagen')?.touched && !subiendoImagen) {
+                        <p class="xp-error-text">La imagen de la publicación es obligatoria.</p>
+                    }
+                </div>
+
+                <!-- Contenido / Descripción -->
+                <div class="publicacion-field-full">
+                    <label for="contenido" class="publicacion-label">Contenido:</label>
+                    <textarea id="contenido" rows="4" formControlName="contenido" class="xp-textarea resize-none" placeholder="Escribe aquí los detalles de tu publicación..."></textarea>
+                </div>
+
+            </div>
+
+            <!-- Separador 3D XP y acciones -->
+            <div class="xp-separator"></div>
+
+            <div class="publicacion-actions">
+                <button
+                        type="submit"
+                        [disabled]="publicacionForm.invalid || cargando || subiendoImagen"
+                        class="xp-button xp-button-primary xp-button-block">
+                    @if (cargando) {
+                        <span>Publicando...</span>
+                    } @else if (subiendoImagen) {
+                        <span>Subiendo imagen...</span>
+                    } @else {
+                        <span>Publicar</span>
+                    }
+                </button>
+
+                <!-- Link para cancelar / volver -->
+                <p class="publicacion-footer-text">
+                    <a routerLink="/publicaciones" class="publicacion-link">Cancelar y volver a publicaciones</a>
+                </p>
+            </div>
+
+        </form>
+
+    </div>
+</div>
