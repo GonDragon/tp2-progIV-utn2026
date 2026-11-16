@@ -7,6 +7,7 @@ import {
   OnChanges,
   SimpleChanges,
   inject,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { DatePipe, NgClass, NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,6 +28,7 @@ import { AutenticacionService, UsuarioToken } from '../../services/autenticacion
 export class PublicacionComponent implements OnInit, OnChanges {
   private publicacionesService = inject(PublicacionesService);
   private authService = inject(AutenticacionService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input({ required: true }) publicacion!: PublicacionItem;
   @Input() usuarioActual: UsuarioToken | null = null;
@@ -64,6 +66,7 @@ export class PublicacionComponent implements OnInit, OnChanges {
       this.textoEdicion = '';
       this.nuevoComentarioTexto = '';
       this.cargarComentarios();
+      this.cdr.detectChanges();
     }
   }
 
@@ -137,6 +140,7 @@ export class PublicacionComponent implements OnInit, OnChanges {
     if (!this.publicacion || !this.publicacion._id) return;
     this.cargandoComentarios = true;
     this.paginaActualComentarios = 1;
+    this.cdr.detectChanges();
     this.publicacionesService
       .getComentarios(this.publicacion._id, {
         page: 1,
@@ -148,10 +152,12 @@ export class PublicacionComponent implements OnInit, OnChanges {
           this.hayMasComentarios =
             (comentarios?.length || 0) === this.limiteComentarios;
           this.cargandoComentarios = false;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al cargar comentarios:', err);
           this.cargandoComentarios = false;
+          this.cdr.detectChanges();
         },
       });
   }
@@ -167,6 +173,7 @@ export class PublicacionComponent implements OnInit, OnChanges {
     }
 
     this.cargandoMasComentarios = true;
+    this.cdr.detectChanges();
     const siguientePagina = this.paginaActualComentarios + 1;
     this.publicacionesService
       .getComentarios(this.publicacion._id, {
@@ -180,10 +187,12 @@ export class PublicacionComponent implements OnInit, OnChanges {
           this.paginaActualComentarios = siguientePagina;
           this.hayMasComentarios = batch.length === this.limiteComentarios;
           this.cargandoMasComentarios = false;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al cargar más comentarios:', err);
           this.cargandoMasComentarios = false;
+          this.cdr.detectChanges();
         },
       });
   }
@@ -193,6 +202,7 @@ export class PublicacionComponent implements OnInit, OnChanges {
     if (!texto || this.enviandoComentario || !this.publicacion?._id) return;
 
     this.enviandoComentario = true;
+    this.cdr.detectChanges();
     this.publicacionesService
       .agregarComentario(this.publicacion._id, texto)
       .subscribe({
@@ -201,10 +211,12 @@ export class PublicacionComponent implements OnInit, OnChanges {
           this.enviandoComentario = false;
           this.paginaActualComentarios = 1;
           this.cargarComentarios();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al enviar comentario:', err);
           this.enviandoComentario = false;
+          this.cdr.detectChanges();
         },
       });
   }
@@ -212,6 +224,7 @@ export class PublicacionComponent implements OnInit, OnChanges {
   activarEdicion(comentario: ComentarioItem): void {
     this.comentarioEditandoId = comentario._id;
     this.textoEdicion = comentario.contenido;
+    this.cdr.detectChanges();
   }
 
   guardarEdicion(comentario: ComentarioItem): void {
@@ -219,6 +232,7 @@ export class PublicacionComponent implements OnInit, OnChanges {
     if (!texto || this.guardandoEdicion) return;
 
     this.guardandoEdicion = true;
+    this.cdr.detectChanges();
     this.publicacionesService
       .modificarComentario(comentario._id, texto)
       .subscribe({
@@ -228,10 +242,12 @@ export class PublicacionComponent implements OnInit, OnChanges {
           this.comentarioEditandoId = null;
           this.textoEdicion = '';
           this.guardandoEdicion = false;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al modificar comentario:', err);
           this.guardandoEdicion = false;
+          this.cdr.detectChanges();
         },
       });
   }
