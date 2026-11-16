@@ -1,1 +1,88 @@
-<p>est-comentarios-por-pub works!</p>
+<div class="est-comentarios-pub-container">
+  <!-- Barra de Filtros -->
+  <div class="est-filtros-bar">
+    <div class="filtro-item">
+      <label for="fecha-inicio" class="filtro-label">Fecha Inicio:</label>
+      <input
+        id="fecha-inicio"
+        type="date"
+        class="xp-input"
+        [(ngModel)]="fechaInicio"
+        [disabled]="cargando"
+      />
+    </div>
+
+    <div class="filtro-item">
+      <label for="fecha-fin" class="filtro-label">Fecha Fin:</label>
+      <input
+        id="fecha-fin"
+        type="date"
+        class="xp-input"
+        [(ngModel)]="fechaFin"
+        [disabled]="cargando"
+      />
+    </div>
+
+    <div class="filtro-acciones">
+      <button
+        type="button"
+        class="xp-button xp-button-primary"
+        (click)="consultarEstadisticas()"
+        [disabled]="cargando"
+      >
+        <span>{{ cargando ? 'Consultando...' : 'Consultar' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Alerta de Error si ocurre -->
+  <div *ngIf="errorMensaje" class="xp-alert-error">
+    <span>⚠️</span>
+    <span>{{ errorMensaje }}</span>
+  </div>
+
+  <!-- Métricas Rápidas -->
+  <div class="est-metricas-grid" *ngIf="!cargando && !errorMensaje">
+    <div class="metrica-card">
+      <span class="metrica-titulo">Total Comentarios</span>
+      <span class="metrica-valor">{{ totalComentarios }}</span>
+    </div>
+    <div class="metrica-card">
+      <span class="metrica-titulo">Publicaciones con Comentarios</span>
+      <span class="metrica-valor">{{ pubsConComentarios }}</span>
+    </div>
+    <div class="metrica-card">
+      <span class="metrica-titulo">Publicación Principal</span>
+      <span class="metrica-valor metrica-texto" [title]="publicacionPrincipal">{{ publicacionPrincipal }}</span>
+    </div>
+  </div>
+
+  <!-- Contenedor del Gráfico -->
+  <div class="est-chart-frame">
+    <!-- Estado de Carga -->
+    <div *ngIf="cargando" class="est-loading-overlay">
+      <div class="xp-spinner"></div>
+      <span class="loading-text">Consultando comentarios por publicación...</span>
+    </div>
+
+    <!-- Sin datos -->
+    <div *ngIf="!cargando && !errorMensaje && totalComentarios === 0" class="est-no-data">
+      <span>ℹ️</span>
+      <span>No se registraron comentarios en las publicaciones para el período seleccionado.</span>
+    </div>
+
+    <!-- Gráfico ApexCharts -->
+    <div *ngIf="!cargando && !errorMensaje && chartOptions && totalComentarios > 0" class="est-chart-wrapper">
+      <apx-chart
+        [series]="chartOptions.series!"
+        [chart]="chartOptions.chart!"
+        [labels]="chartOptions.labels!"
+        [colors]="chartOptions.colors!"
+        [legend]="chartOptions.legend!"
+        [tooltip]="chartOptions.tooltip!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [responsive]="chartOptions.responsive!"
+      ></apx-chart>
+    </div>
+  </div>
+</div>
