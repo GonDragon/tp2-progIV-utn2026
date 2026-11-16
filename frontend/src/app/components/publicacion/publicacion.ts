@@ -1,16 +1,33 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { DatePipe, NgClass, NgIf } from '@angular/common';
-import { PublicacionItem } from '../../services/publicaciones';
-import { UsuarioToken } from '../../services/autenticacion';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
+import { DatePipe, NgClass, NgIf, NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import {
+  ComentarioItem,
+  PublicacionesService,
+  PublicacionItem,
+} from '../../services/publicaciones';
+import { AutenticacionService, UsuarioToken } from '../../services/autenticacion';
 
 @Component({
   selector: 'app-publicacion',
   standalone: true,
-  imports: [DatePipe, NgIf, NgClass],
+  imports: [DatePipe, NgIf, NgFor, NgClass, FormsModule],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.css',
 })
-export class PublicacionComponent {
+export class PublicacionComponent implements OnInit, OnChanges {
+  private publicacionesService = inject(PublicacionesService);
+  private authService = inject(AutenticacionService);
+
   @Input({ required: true }) publicacion!: PublicacionItem;
   @Input() usuarioActual: UsuarioToken | null = null;
   @Input() leGusta: boolean = false;
@@ -18,6 +35,36 @@ export class PublicacionComponent {
   @Output() like = new EventEmitter<PublicacionItem>();
   @Output() quitarLike = new EventEmitter<PublicacionItem>();
   @Output() cerrar = new EventEmitter<void>();
+
+  // Estado de comentarios
+  comentarios: ComentarioItem[] = [];
+  cargandoComentarios: boolean = false;
+  paginaActualComentarios: number = 1;
+  limiteComentarios: number = 10;
+  hayMasComentarios: boolean = false;
+
+  // Estado de nuevo comentario
+  nuevoComentarioTexto: string = '';
+  enviandoComentario: boolean = false;
+
+  // Estado de edición de comentario
+  comentarioEditandoId: string | null = null;
+  textoEdicion: string = '';
+  guardandoEdicion: boolean = false;
+
+  ngOnInit(): void {
+    this.cargarComentarios();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['publicacion'] && !changes['publicacion'].firstChange) {
+      this.paginaActualComentarios = 1;
+      this.comentarioEditandoId = null;
+      this.textoEdicion = '';
+      this.nuevoComentarioTexto = '';
+      this.cargarComentarios();
+    }
+  }
 
   get autorNombre(): string {
     if (typeof this.publicacion.autor === 'object' && this.publicacion.autor !== null) {
@@ -35,6 +82,138 @@ export class PublicacionComponent {
       return this.publicacion.autor.username || '';
     }
     return '';
+  }
+
+  get estaLogueado(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
+  getUsuarioIdActual(): string | null {
+    if (this.usuarioActual?.sub) return this.usuarioActual.sub;
+    const user = this.authService.getUsuarioActual();
+    return user?.sub || null;
+  }
+
+  getIdUsuarioComentario(comentario: ComentarioItem): string {
+    if (!comentario.id_usuario) return '';
+    if (typeof comentario.id_usuario === 'object' && comentario.id_usuario !== null) {
+      return comentario.id_usuario._id || '';
+    }
+    return String(comentario.id_usuario);
+  }
+
+  esMiComentario(comentario: ComentarioItem): boolean {
+    const miId = this.getUsuarioIdActual();
+    if (!miId) return false;
+    const autorId = this.getIdUsuarioComentario(comentario);
+    return miId.toString() === autorId.toString();
+  }
+
+  getUsernameUsuario(comentario: ComentarioItem): string {
+    if (typeof comentario.id_usuario === 'object' && comentario.id_usuario !== null) {
+      return (
+        comentario.id_usuario.username ||
+        comentario.id_usuario.nombre ||
+        'Usuario'
+      );
+    }
+    return 'Usuario';
+  }
+
+  getFotoUsuario(comentario: ComentarioItem): string | null {
+    if (typeof comentario.id_usuario === 'object' && comentario.id_usuario !== null) {
+      return comentario.id_usuario.urlFoto || null;
+    }
+    return null;
+  }
+
+  getInicialesUsuario(comentario: ComentarioItem): string {
+    const username = this.getUsernameUsuario(comentario);
+    return username ? username.charAt(0).toUpperCase() : 'U';
+  }
+
+  cargarComentarios(): void {
+    if (!this.publicacion || !this.publicacion._id) return;
+    this.cargandoComentarios = true;
+    this.publicacionesService
+      .getComentarios(this.publicacion._id, {
+        page: this.paginaActualComentarios,
+        limit: this.limiteComentarios,
+      })
+      .subscribe({
+        next: (comentarios) => {
+          this.comentarios = comentarios || [];
+          this.hayMasComentarios =
+            (comentarios?.length || 0) === this.limiteComentarios;
+          this.cargandoComentarios = false;
+        },
+        error: (err) => {
+          console.error('Error al cargar comentarios:', err);
+          this.cargandoComentarios = false;
+        },
+      });
+  }
+
+  paginaAnteriorComentarios(): void {
+    if (this.paginaActualComentarios > 1 && !this.cargandoComentarios) {
+      this.paginaActualComentarios--;
+      this.cargarComentarios();
+    }
+  }
+
+  paginaSiguienteComentarios(): void {
+    if (this.hayMasComentarios && !this.cargandoComentarios) {
+      this.paginaActualComentarios++;
+      this.cargarComentarios();
+    }
+  }
+
+  enviarComentario(): void {
+    const texto = this.nuevoComentarioTexto.trim();
+    if (!texto || this.enviandoComentario || !this.publicacion?._id) return;
+
+    this.enviandoComentario = true;
+    this.publicacionesService
+      .agregarComentario(this.publicacion._id, texto)
+      .subscribe({
+        next: () => {
+          this.nuevoComentarioTexto = '';
+          this.enviandoComentario = false;
+          this.paginaActualComentarios = 1;
+          this.cargarComentarios();
+        },
+        error: (err) => {
+          console.error('Error al enviar comentario:', err);
+          this.enviandoComentario = false;
+        },
+      });
+  }
+
+  activarEdicion(comentario: ComentarioItem): void {
+    this.comentarioEditandoId = comentario._id;
+    this.textoEdicion = comentario.contenido;
+  }
+
+  guardarEdicion(comentario: ComentarioItem): void {
+    const texto = this.textoEdicion.trim();
+    if (!texto || this.guardandoEdicion) return;
+
+    this.guardandoEdicion = true;
+    this.publicacionesService
+      .modificarComentario(comentario._id, texto)
+      .subscribe({
+        next: () => {
+          comentario.contenido = texto;
+          comentario.modificado = true;
+          this.comentarioEditandoId = null;
+          this.textoEdicion = '';
+          this.guardandoEdicion = false;
+        },
+        error: (err) => {
+          console.error('Error al modificar comentario:', err);
+          this.guardandoEdicion = false;
+        },
+      });
   }
 
   toggleLike(): void {

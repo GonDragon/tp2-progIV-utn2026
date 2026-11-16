@@ -56,6 +56,125 @@
           loading="lazy"
         />
       </div>
+
+      <!-- Sección de comentarios (Debajo de la imagen) -->
+      <div class="comentarios-seccion">
+        <!-- Caja de comentarios con altura fija de 400px y scroll interno -->
+        <div class="comentarios-caja">
+          <div *ngIf="cargandoComentarios" class="comentarios-loading">
+            <div class="xp-spinner"></div>
+            <span>Cargando comentarios...</span>
+          </div>
+
+          <div *ngIf="!cargandoComentarios && comentarios.length === 0" class="comentarios-empty">
+            <span>No hay comentarios en esta publicación.</span>
+          </div>
+
+          <div *ngIf="!cargandoComentarios && comentarios.length > 0" class="comentarios-lista">
+            <div *ngFor="let com of comentarios" class="comentario-item">
+              <!-- Vista normal del comentario -->
+              <div *ngIf="comentarioEditandoId !== com._id" class="comentario-row">
+                <!-- Imagen de perfil a la izquierda -->
+                <div class="comentario-avatar-wrapper">
+                  <img
+                    *ngIf="getFotoUsuario(com)"
+                    [src]="getFotoUsuario(com)"
+                    [alt]="getUsernameUsuario(com)"
+                    class="comentario-avatar-img"
+                  />
+                  <div
+                    *ngIf="!getFotoUsuario(com)"
+                    class="comentario-avatar-fallback"
+                  >
+                    {{ getInicialesUsuario(com) }}
+                  </div>
+                </div>
+
+                <!-- Info y mensaje a la derecha del avatar -->
+                <div class="comentario-content">
+                  <div class="comentario-header">
+                    <div class="comentario-meta">
+                      <strong class="comentario-username">{{ getUsernameUsuario(com) }}</strong>
+                      <span class="comentario-fecha">{{ com.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                      <span *ngIf="com.modificado" class="comentario-editado">(Editado)</span>
+                    </div>
+
+                    <!-- Botón editar si el comentario es tuyo -->
+                    <button
+                      *ngIf="esMiComentario(com)"
+                      type="button"
+                      class="comentario-editar-btn"
+                      (click)="activarEdicion(com)"
+                      title="Editar comentario"
+                    >
+                      <span class="comentario-editar-icon">✏️</span>
+                      <span>editar</span>
+                    </button>
+                  </div>
+
+                  <p class="comentario-texto">{{ com.contenido }}</p>
+                </div>
+              </div>
+
+              <!-- Reemplazo para edición del comentario propio -->
+              <div *ngIf="comentarioEditandoId === com._id" class="comentario-edicion-row">
+                <textarea
+                  rows="3"
+                  class="comentario-edicion-textarea"
+                  [(ngModel)]="textoEdicion"
+                ></textarea>
+                <button
+                  type="button"
+                  class="xp-button comentario-guardar-btn"
+                  (click)="guardarEdicion(com)"
+                  [disabled]="!textoEdicion.trim() || guardandoEdicion"
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paginación de comentarios -->
+        <div *ngIf="comentarios.length > 0 || paginaActualComentarios > 1" class="comentarios-paginacion">
+          <button
+            type="button"
+            class="xp-button comentarios-page-btn"
+            (click)="paginaAnteriorComentarios()"
+            [disabled]="paginaActualComentarios <= 1 || cargandoComentarios"
+          >
+            ◀ Anterior
+          </button>
+          <span class="comentarios-page-info">Página {{ paginaActualComentarios }}</span>
+          <button
+            type="button"
+            class="xp-button comentarios-page-btn"
+            (click)="paginaSiguienteComentarios()"
+            [disabled]="!hayMasComentarios || cargandoComentarios"
+          >
+            Siguiente ▶
+          </button>
+        </div>
+
+        <!-- Formulario para agregar nuevo comentario debajo de la caja de comentarios -->
+        <div *ngIf="estaLogueado" class="nuevo-comentario-container">
+          <button
+            type="button"
+            class="xp-button nuevo-comentario-btn"
+            (click)="enviarComentario()"
+            [disabled]="!nuevoComentarioTexto.trim() || enviandoComentario"
+          >
+            Enviar
+          </button>
+          <textarea
+            rows="3"
+            class="nuevo-comentario-textarea"
+            [(ngModel)]="nuevoComentarioTexto"
+            placeholder="Escribe un comentario..."
+          ></textarea>
+        </div>
+      </div>
     </div>
   </div>
 

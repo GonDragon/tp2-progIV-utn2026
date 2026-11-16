@@ -7,6 +7,25 @@ export interface AutorPublicacion {
   username: string;
   nombre?: string;
   email?: string;
+  urlFoto?: string;
+}
+
+export interface UsuarioComentario {
+  _id: string;
+  username: string;
+  nombre?: string;
+  apellido?: string;
+  urlFoto?: string;
+}
+
+export interface ComentarioItem {
+  _id: string;
+  id_usuario: UsuarioComentario | string;
+  id_publicacion: string;
+  contenido: string;
+  modificado: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PublicacionItem {
@@ -70,5 +89,49 @@ export class PublicacionesService {
 
   public publicar(data: { titulo: string; contenido?: string; url_imagen?: string }): Observable<PublicacionItem> {
     return this.backend.post<PublicacionItem>('/pubs/publicar', data);
+  }
+
+  public getComentarios(
+    publicacionId: string,
+    query: { offset?: number; limit?: number; page?: number } = {},
+  ): Observable<ComentarioItem[]> {
+    const params = new URLSearchParams();
+    if (query.offset !== undefined && query.offset !== null) {
+      params.append('offset', query.offset.toString());
+    }
+    if (query.limit !== undefined && query.limit !== null) {
+      params.append('limit', query.limit.toString());
+    }
+    if (query.page !== undefined && query.page !== null) {
+      params.append('page', query.page.toString());
+    }
+
+    const queryString = params.toString();
+    const endpoint = queryString
+      ? `/pubs/publicacion/${publicacionId}/comentarios?${queryString}`
+      : `/pubs/publicacion/${publicacionId}/comentarios`;
+    return this.backend.get<ComentarioItem[]>(endpoint);
+  }
+
+  public agregarComentario(
+    publicacionId: string,
+    contenido: string,
+  ): Observable<ComentarioItem> {
+    return this.backend.post<ComentarioItem>(
+      `/pubs/publicacion/${publicacionId}/comentario`,
+      {
+        contenido,
+        id_publicacion: publicacionId,
+      },
+    );
+  }
+
+  public modificarComentario(
+    comentarioId: string,
+    contenido: string,
+  ): Observable<ComentarioItem> {
+    return this.backend.put<ComentarioItem>(`/pubs/comentario/${comentarioId}`, {
+      contenido,
+    });
   }
 }

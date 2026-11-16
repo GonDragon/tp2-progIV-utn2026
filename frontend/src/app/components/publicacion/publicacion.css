@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .publicacion-avatar {
@@ -140,4 +142,232 @@
 .publicacion-like-icon-active {
   fill: #a32222;
   color: #a32222;
+}
+
+/* Sección de comentarios */
+.comentarios-seccion {
+  margin-top: 10px;
+}
+
+/* Caja de comentarios de altura fija 400px con scroll interno */
+.comentarios-caja {
+  height: 10vh;
+  overflow-y: auto;
+  border: 1px solid #7f9db9;
+  background-color: #ffffff;
+  padding: 8px;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.comentarios-loading,
+.comentarios-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666666;
+  font-size: 11.5px;
+  gap: 8px;
+  text-align: center;
+}
+
+.comentarios-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comentario-item {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e5d8;
+}
+
+.comentario-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.comentario-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.comentario-avatar-wrapper {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.comentario-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 2px;
+  object-fit: cover;
+  border: 1px solid #7f9db9;
+  display: block;
+}
+
+.comentario-avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 2px;
+  border: 1px solid #7f9db9;
+  background: linear-gradient(135deg, #c4ddfd 0%, #7db6f8 100%);
+  color: #002266;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+  user-select: none;
+}
+
+.comentario-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.comentario-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.comentario-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+}
+
+.comentario-username {
+  font-weight: bold;
+  color: var(--xp-text-navy, #001144);
+}
+
+.comentario-fecha {
+  color: #555555;
+  font-size: 10.5px;
+}
+
+.comentario-editado {
+  color: #888888;
+  font-size: 10px;
+  font-style: italic;
+}
+
+.comentario-texto {
+  margin: 0;
+  font-size: 11.5px;
+  color: #222222;
+  white-space: pre-line;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.comentario-editar-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10.5px;
+  color: #0044aa;
+  padding: 1px 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.comentario-editar-btn:hover {
+  text-decoration: underline;
+  background-color: #e2eafc;
+}
+
+.comentario-editar-icon {
+  font-size: 11px;
+}
+
+/* Edición del comentario */
+.comentario-edicion-row {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.comentario-edicion-textarea {
+  flex: 1;
+  resize: vertical;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 11.5px;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+.comentario-guardar-btn {
+  padding: 0 12px;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Paginación de comentarios */
+.comentarios-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 2px 0;
+}
+
+.comentarios-page-btn {
+  padding: 2px 8px;
+  font-size: 10.5px;
+}
+
+.comentarios-page-info {
+  font-size: 11px;
+  color: #444444;
+  font-weight: bold;
+}
+
+/* Formulario nuevo comentario */
+.nuevo-comentario-container {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.nuevo-comentario-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nuevo-comentario-textarea {
+  flex: 1;
+  resize: vertical;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 11.5px;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  box-sizing: border-box;
 }
