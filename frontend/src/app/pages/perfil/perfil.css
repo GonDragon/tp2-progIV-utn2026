@@ -333,13 +333,7 @@
 }
 
 .perfil-posts-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-}
-
-@media (min-width: 640px) {
-  .perfil-posts-grid {
-    grid-template-columns: 1fr 1fr;
-  }
 }

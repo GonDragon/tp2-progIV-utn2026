@@ -119,16 +119,9 @@
 }
 
 .publicaciones-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-
-@media (min-width: 640px) {
-  .publicaciones-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .publicaciones-pagination-bar {
