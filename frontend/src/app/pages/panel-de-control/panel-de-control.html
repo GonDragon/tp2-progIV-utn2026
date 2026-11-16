@@ -1,1 +1,149 @@
-<p>panel-de-control works!</p>
+<div class="panel-de-control-container">
+  <!-- Ventana Principal estilo Panel de Control de Windows XP -->
+  <div class="xp-window panel-de-control-window">
+
+    <!-- Barra de Título -->
+    <div class="xp-titlebar">
+      <div class="xp-titlebar-title">
+        <span class="panel-title-icon">⚙️</span>
+        <span>Panel de control</span>
+      </div>
+      <div class="xp-window-controls">
+        <span class="xp-win-btn xp-win-btn-default" title="Minimizar">_</span>
+        <span class="xp-win-btn xp-win-btn-default" title="Maximizar">□</span>
+        <span class="xp-win-btn xp-win-btn-close" title="Cerrar">✕</span>
+      </div>
+    </div>
+
+    <!-- Barra de Menú -->
+    <div class="xp-menubar">
+      <span class="xp-menubar-item">Archivo</span>
+      <span class="xp-menubar-item">Edición</span>
+      <span class="xp-menubar-item">Ver</span>
+      <span class="xp-menubar-item">Favoritos</span>
+      <span class="xp-menubar-item">Herramientas</span>
+      <span class="xp-menubar-item">Ayuda</span>
+    </div>
+
+    <!-- Barra de Dirección -->
+    <div class="xp-addressbar">
+      <span class="xp-addressbar-label">Dirección:</span>
+      <div class="xp-addressbar-input">
+        <span>⚙️</span>
+        <span>Panel de control</span>
+      </div>
+    </div>
+
+    <!-- Cuerpo del Panel de Control -->
+    <div class="panel-de-control-body">
+      <!-- Panel Lateral Izquierdo de Tareas estilo Windows XP -->
+      <aside class="panel-lateral-xp">
+        <div class="panel-lateral-seccion">
+          <div class="panel-lateral-header">
+            <span>Tareas del Panel de control</span>
+          </div>
+          <div class="panel-lateral-content">
+            <div class="panel-lateral-item">
+              <span class="link-bullet">▶</span>
+              <span class="link-text">Cambiar a vista por categorías</span>
+            </div>
+            <div class="panel-lateral-item">
+              <span class="link-bullet">▶</span>
+              <span class="link-text">Ver información del sistema</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-lateral-seccion">
+          <div class="panel-lateral-header">
+            <span>Ver también</span>
+          </div>
+          <div class="panel-lateral-content">
+            <div class="panel-lateral-item">
+              <span class="link-bullet">▶</span>
+              <span class="link-text">Windows Update</span>
+            </div>
+            <div class="panel-lateral-item">
+              <span class="link-bullet">▶</span>
+              <span class="link-text">Ayuda y soporte técnico</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Área de Contenido Principal con Iconos -->
+      <main class="panel-iconos-area">
+        <div class="panel-iconos-grid">
+          <!-- Icono Gestión de Usuarios -->
+          <button
+            type="button"
+            class="xp-desktop-icon"
+            (click)="abrirModalUsuarios()"
+            title="Gestión de usuarios"
+          >
+            <div class="icon-image-wrapper">
+              <img
+                src="/img/iconos/usuarios.png"
+                alt="Gestión de usuarios"
+                class="icon-img"
+              />
+            </div>
+            <span class="icon-label">Gestión de usuarios</span>
+          </button>
+
+          <!-- Icono Estadísticas -->
+          <button
+            type="button"
+            class="xp-desktop-icon"
+            (click)="abrirModalEstadisticas()"
+            title="Estadísticas"
+          >
+            <div class="icon-image-wrapper">
+              <img
+                src="/img/iconos/estadisticas.png"
+                alt="Estadísticas"
+                class="icon-img"
+              />
+            </div>
+            <span class="icon-label">Estadísticas</span>
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- Barra de Estado Inferior -->
+    <div class="xp-statusbar">
+      <div class="xp-statusbar-panel">
+        <span>✔️ Listo</span>
+      </div>
+      <div class="xp-statusbar-panel">
+        <span>2 objetos</span>
+      </div>
+      <div class="xp-statusbar-panel panel-status-local">
+        <span>💻 Mi PC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Gestión de Usuarios -->
+  <div
+    *ngIf="modalActivo === 'usuarios'"
+    class="panel-modal-overlay"
+    (click)="cerrarModal()"
+  >
+    <div class="panel-modal-dialog" (click)="$event.stopPropagation()">
+      <app-gestion-usuarios (cerrar)="cerrarModal()"></app-gestion-usuarios>
+    </div>
+  </div>
+
+  <!-- Modal Estadísticas -->
+  <div
+    *ngIf="modalActivo === 'estadisticas'"
+    class="panel-modal-overlay"
+    (click)="cerrarModal()"
+  >
+    <div class="panel-modal-dialog" (click)="$event.stopPropagation()">
+      <app-estadisticas (cerrar)="cerrarModal()"></app-estadisticas>
+    </div>
+  </div>
+</div>

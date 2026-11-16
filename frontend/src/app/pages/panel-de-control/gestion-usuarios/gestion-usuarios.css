@@ -1,0 +1,21 @@
+.gestion-usuarios-window {
+  width: 100%;
+  min-height: 380px;
+  background-color: var(--xp-window-bg, #ece9d8);
+  display: flex;
+  flex-direction: column;
+}
+
+.xp-titlebar-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.xp-window-content {
+  flex: 1;
+  background-color: var(--xp-window-bg, #ece9d8);
+  padding: 16px;
+  min-height: 320px;
+  box-sizing: border-box;
+}
