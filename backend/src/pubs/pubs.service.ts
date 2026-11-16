@@ -289,7 +289,7 @@ export class PubsService {
     }
 
     if (user) {
-      const usuarioId = user.sub ?? user.id ?? user._id;
+      const usuarioId = user.sub;
       if (usuarioId) {
         const esAutor = comentario.id_usuario.toString() === usuarioId.toString();
         const esAdmin = user.rol === 'administrador' || user.rol === 'admin';
