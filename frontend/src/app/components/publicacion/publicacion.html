@@ -28,7 +28,7 @@
     <!-- Subcabecera con detalles de autor y fecha para mobile -->
     <div class="publicacion-subbar">
       <div>
-        <span *ngIf="autorUsername" class="publicacion-author-username">&#64;{{ autorUsername }}</span>
+          <a href="/perfil/{{ autorUsername }}"><span *ngIf="autorUsername" class="publicacion-author-username">&#64;{{ autorUsername }}</span></a>
       </div>
       <div>
         <span>{{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
@@ -94,7 +94,9 @@
                 <div class="comentario-content">
                   <div class="comentario-header">
                     <div class="comentario-meta">
-                      <strong class="comentario-username">{{ getUsernameUsuario(com) }}</strong>
+                      <a href="/perfil/{{ getUsernameUsuario(com) }}">
+                        <strong class="comentario-username">{{ getUsernameUsuario(com) }}</strong>
+                      </a>
                       <span class="comentario-fecha">{{ com.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
                       <span *ngIf="com.modificado" class="comentario-editado">(Editado)</span>
                     </div>

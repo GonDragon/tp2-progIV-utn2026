@@ -151,7 +151,8 @@
 
 /* Caja de comentarios de altura fija 400px con scroll interno */
 .comentarios-caja {
-  height: 10vh;
+  height: 30rem;
+  max-height: 20vh;
   overflow-y: auto;
   border: 1px solid #7f9db9;
   background-color: #ffffff;
