@@ -10,14 +10,22 @@ import {
   Publicacion,
   PublicacionDocument,
 } from './entities/publicacion.entity.js';
+import {
+  Comentario,
+  ComentarioDocument,
+} from './entities/comentario.entity.js';
 import { Usuario, UsuarioDocument } from '../auth/entities/usuario.entity.js';
 import { CreatePublicacionDto } from './dto/create-publicacion.dto.js';
+import { CreateComentarioDto } from './dto/create-comentario.dto.js';
+import { UpdateComentarioDto } from './dto/update-comentario.dto.js';
 
 @Injectable()
 export class PubsService {
   constructor(
     @InjectModel(Publicacion.name)
     private readonly publicacionModel: Model<PublicacionDocument>,
+    @InjectModel(Comentario.name)
+    private readonly comentarioModel: Model<ComentarioDocument>,
     @InjectModel(Usuario.name)
     private readonly usuarioModel: Model<UsuarioDocument>,
   ) {}
@@ -228,5 +236,116 @@ export class PubsService {
     ) as any;
 
     return await publicacion.save();
+  }
+
+  async agregarComentario(
+    publicacionId: string | undefined,
+    createComentarioDto: CreateComentarioDto,
+    usuarioId: string,
+  ): Promise<Comentario> {
+    const pubId = publicacionId || createComentarioDto.id_publicacion;
+
+    if (!pubId || !Types.ObjectId.isValid(pubId)) {
+      throw new BadRequestException('ID de publicación inválido');
+    }
+
+    if (!usuarioId || !Types.ObjectId.isValid(usuarioId)) {
+      throw new BadRequestException('ID de usuario inválido');
+    }
+
+    const publicacion = await this.publicacionModel.findById(pubId);
+    if (!publicacion || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    const contenido = (createComentarioDto.contenido ?? '').trim();
+
+    if (!contenido) {
+      throw new BadRequestException('El contenido del comentario es requerido');
+    }
+
+    const nuevoComentario = new this.comentarioModel({
+      id_usuario: new Types.ObjectId(usuarioId),
+      id_publicacion: new Types.ObjectId(pubId),
+      contenido,
+      modificado: false,
+    });
+
+    return await nuevoComentario.save();
+  }
+
+  async modificarComentario(
+    comentarioId: string | undefined,
+    updateComentarioDto: UpdateComentarioDto,
+    user?: { sub?: string; id?: string; _id?: string; rol?: string },
+  ): Promise<Comentario> {
+    if (!comentarioId || !Types.ObjectId.isValid(comentarioId)) {
+      throw new BadRequestException('ID de comentario inválido');
+    }
+
+    const comentario = await this.comentarioModel.findById(comentarioId);
+    if (!comentario) {
+      throw new NotFoundException('Comentario no encontrado');
+    }
+
+    if (user) {
+      const usuarioId = user.sub ?? user.id ?? user._id;
+      if (usuarioId) {
+        const esAutor = comentario.id_usuario.toString() === usuarioId.toString();
+        const esAdmin = user.rol === 'administrador' || user.rol === 'admin';
+        if (!esAutor && !esAdmin) {
+          throw new ForbiddenException(
+            'Solo el autor o un administrador pueden modificar este comentario',
+          );
+        }
+      }
+    }
+
+    const nuevoContenido = (updateComentarioDto.contenido ?? '').trim();
+
+    if (!nuevoContenido) {
+      throw new BadRequestException('El contenido del comentario es requerido');
+    }
+
+    comentario.contenido = nuevoContenido;
+    comentario.modificado = true;
+
+    return await comentario.save();
+  }
+
+  async getComentarios(
+    publicacionId: string | undefined,
+    query?: {
+      offset?: number;
+      limit?: number;
+      page?: number;
+    },
+  ): Promise<any[]> {
+    if (!publicacionId || !Types.ObjectId.isValid(publicacionId)) {
+      throw new BadRequestException('ID de publicación inválido');
+    }
+
+    const publicacion = await this.publicacionModel.findById(publicacionId);
+    if (!publicacion || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    let offsetNum = Number(query?.offset);
+    if (isNaN(offsetNum) && query?.page) {
+      const pageNum = Math.max(1, Number(query.page) || 1);
+      const limit = Math.max(1, Number(query?.limit) || 10);
+      offsetNum = (pageNum - 1) * limit;
+    }
+    offsetNum = Math.max(0, offsetNum || 0);
+    const limitNum = Math.max(1, Number(query?.limit) || 10);
+
+    return await this.comentarioModel
+      .find({ id_publicacion: new Types.ObjectId(publicacionId) })
+      .populate('id_usuario', '-password')
+      .sort({ createdAt: -1, _id: -1 })
+      .skip(offsetNum)
+      .limit(limitNum)
+      .lean()
+      .exec();
   }
 }

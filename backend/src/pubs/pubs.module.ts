@@ -6,12 +6,17 @@ import {
   Publicacion,
   PublicacionSchema,
 } from './entities/publicacion.entity.js';
+import {
+  Comentario,
+  ComentarioSchema,
+} from './entities/comentario.entity.js';
 import { Usuario, UsuarioSchema } from '../auth/entities/usuario.entity.js';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Publicacion.name, schema: PublicacionSchema },
+      { name: Comentario.name, schema: ComentarioSchema },
       { name: Usuario.name, schema: UsuarioSchema },
     ]),
   ],
