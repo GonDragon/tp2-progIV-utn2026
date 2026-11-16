@@ -348,4 +348,158 @@ export class PubsService {
       .lean()
       .exec();
   }
+
+  async cantidadPublicaciones(query: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    usuario?: string;
+  }): Promise<{ cantidad: number }> {
+    const { fecha_inicio, fecha_fin, usuario } = query;
+
+    if (!fecha_inicio || !fecha_fin) {
+      throw new BadRequestException(
+        'Fecha de inicio y fecha de fin son requeridas',
+      );
+    }
+
+    let startDate: Date;
+    let endDate: Date;
+
+    if (
+      typeof fecha_inicio === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(fecha_inicio.trim())
+    ) {
+      startDate = new Date(`${fecha_inicio.trim()}T00:00:00.000Z`);
+    } else {
+      startDate = new Date(fecha_inicio);
+    }
+
+    if (
+      typeof fecha_fin === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(fecha_fin.trim())
+    ) {
+      endDate = new Date(`${fecha_fin.trim()}T23:59:59.999Z`);
+    } else {
+      endDate = new Date(fecha_fin);
+    }
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new BadRequestException('Formato de fecha inválido');
+    }
+
+    const filter: Record<string, any> = {
+      eliminado: { $ne: true },
+      createdAt: { $gte: startDate, $lte: endDate },
+    };
+
+    if (
+      usuario !== undefined &&
+      usuario !== null &&
+      String(usuario).trim() !== ''
+    ) {
+      const usernameStr = String(usuario).trim();
+      let userId: Types.ObjectId | null = null;
+      const userDoc = await this.usuarioModel.findOne({ username: usernameStr });
+      if (userDoc) {
+        userId = userDoc._id;
+      } else if (Types.ObjectId.isValid(usernameStr)) {
+        const userById = await this.usuarioModel.findById(usernameStr);
+        if (userById) {
+          userId = userById._id;
+        }
+      }
+
+      if (!userId) {
+        return { cantidad: 0 };
+      }
+
+      filter.autor = userId;
+    }
+
+    const cantidad = await this.publicacionModel.countDocuments(filter);
+    return { cantidad };
+  }
+
+  async cantidadComentarios(query: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    usuario?: string;
+    id_publicacion?: string;
+  }): Promise<{ cantidad: number }> {
+    const { fecha_inicio, fecha_fin, usuario, id_publicacion } = query;
+
+    if (!fecha_inicio || !fecha_fin) {
+      throw new BadRequestException(
+        'Fecha de inicio y fecha de fin son requeridas',
+      );
+    }
+
+    let startDate: Date;
+    let endDate: Date;
+
+    if (
+      typeof fecha_inicio === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(fecha_inicio.trim())
+    ) {
+      startDate = new Date(`${fecha_inicio.trim()}T00:00:00.000Z`);
+    } else {
+      startDate = new Date(fecha_inicio);
+    }
+
+    if (
+      typeof fecha_fin === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(fecha_fin.trim())
+    ) {
+      endDate = new Date(`${fecha_fin.trim()}T23:59:59.999Z`);
+    } else {
+      endDate = new Date(fecha_fin);
+    }
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new BadRequestException('Formato de fecha inválido');
+    }
+
+    const filter: Record<string, any> = {
+      createdAt: { $gte: startDate, $lte: endDate },
+    };
+
+    if (
+      usuario !== undefined &&
+      usuario !== null &&
+      String(usuario).trim() !== ''
+    ) {
+      const usernameStr = String(usuario).trim();
+      let userId: Types.ObjectId | null = null;
+      const userDoc = await this.usuarioModel.findOne({ username: usernameStr });
+      if (userDoc) {
+        userId = userDoc._id;
+      } else if (Types.ObjectId.isValid(usernameStr)) {
+        const userById = await this.usuarioModel.findById(usernameStr);
+        if (userById) {
+          userId = userById._id;
+        }
+      }
+
+      if (!userId) {
+        return { cantidad: 0 };
+      }
+
+      filter.id_usuario = userId;
+    }
+
+    if (
+      id_publicacion !== undefined &&
+      id_publicacion !== null &&
+      String(id_publicacion).trim() !== ''
+    ) {
+      const pubIdStr = String(id_publicacion).trim();
+      if (!Types.ObjectId.isValid(pubIdStr)) {
+        return { cantidad: 0 };
+      }
+      filter.id_publicacion = new Types.ObjectId(pubIdStr);
+    }
+
+    const cantidad = await this.comentarioModel.countDocuments(filter);
+    return { cantidad };
+  }
 }

@@ -16,10 +16,41 @@ import { CreatePublicacionDto } from './dto/create-publicacion.dto.js';
 import { CreateComentarioDto } from './dto/create-comentario.dto.js';
 import { UpdateComentarioDto } from './dto/update-comentario.dto.js';
 import { AuthGuard } from '../guards/auth.guard.js';
+import { AdminGuard } from '../guards/admin.guard.js';
 
 @Controller('pubs')
 export class PubsController {
   constructor(private readonly pubsService: PubsService) {}
+
+  @Get('cantidadpubs')
+  @UseGuards(AdminGuard)
+  async cantidadPubs(
+    @Query('fecha_inicio') fecha_inicio?: string,
+    @Query('fecha_fin') fecha_fin?: string,
+    @Query('usuario') usuario?: string,
+  ) {
+    return await this.pubsService.cantidadPublicaciones({
+      fecha_inicio,
+      fecha_fin,
+      usuario,
+    });
+  }
+
+  @Get('cantidadcomments')
+  @UseGuards(AdminGuard)
+  async cantidadComments(
+    @Query('fecha_inicio') fecha_inicio?: string,
+    @Query('fecha_fin') fecha_fin?: string,
+    @Query('usuario') usuario?: string,
+    @Query('id_publicacion') id_publicacion?: string,
+  ) {
+    return await this.pubsService.cantidadComentarios({
+      fecha_inicio,
+      fecha_fin,
+      usuario,
+      id_publicacion,
+    });
+  }
 
   @Post('publicar')
   @UseGuards(AuthGuard)
