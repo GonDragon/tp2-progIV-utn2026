@@ -31,6 +31,9 @@ export class Usuario {
 
   @Prop()
   rol: string;
+
+  @Prop()
+  habilitado: boolean;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

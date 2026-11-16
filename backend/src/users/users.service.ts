@@ -41,4 +41,45 @@ export class UsersService {
 
     return usuario;
   }
+
+  async findAll(
+    cantidad?: string | number,
+    inicial?: string | number,
+  ): Promise<Usuario[]> {
+    const limit =
+      cantidad !== undefined && cantidad !== '' && !isNaN(Number(cantidad))
+        ? Math.max(0, Number(cantidad))
+        : 10;
+    const skip =
+      inicial !== undefined && inicial !== '' && !isNaN(Number(inicial))
+        ? Math.max(0, Number(inicial))
+        : 0;
+
+    return await this.usuarioModel
+      .find()
+      .select('-password -__v')
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
+
+  async deshabilitar(username: string): Promise<Usuario> {
+    const usuario = await this.usuarioModel.findOne({ username });
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    usuario.habilitado = false;
+    return await usuario.save();
+  }
+
+  async habilitar(username: string): Promise<Usuario> {
+    const usuario = await this.usuarioModel.findOne({ username });
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    usuario.habilitado = true;
+    return await usuario.save();
+  }
 }

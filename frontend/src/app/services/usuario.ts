@@ -12,6 +12,7 @@ export interface Usuario {
   descripcion: string;
   urlFoto?: string;
   rol?: string;
+  habilitado?: boolean;
 }
 
 @Injectable({
