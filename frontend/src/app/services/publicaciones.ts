@@ -51,6 +51,27 @@ export interface GetPublicacionesQuery {
 export class PublicacionesService {
   private backend = inject(Backend);
 
+  public getCantidadPublicaciones(query: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    usuario?: string;
+  } = {}): Observable<{ cantidad: number }> {
+    const params = new URLSearchParams();
+    if (query.fecha_inicio) {
+      params.append('fecha_inicio', query.fecha_inicio);
+    }
+    if (query.fecha_fin) {
+      params.append('fecha_fin', query.fecha_fin);
+    }
+    if (query.usuario) {
+      params.append('usuario', query.usuario);
+    }
+
+    const queryString = params.toString();
+    const endpoint = queryString ? `/pubs/cantidadpubs?${queryString}` : '/pubs/cantidadpubs';
+    return this.backend.get<{ cantidad: number }>(endpoint);
+  }
+
   public getPublicaciones(query: GetPublicacionesQuery = {}): Observable<PublicacionItem[]> {
     const params = new URLSearchParams();
     if (query.orderBy) {
