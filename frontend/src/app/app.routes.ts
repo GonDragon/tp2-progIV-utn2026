@@ -30,6 +30,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/perfil/perfil').then((m) => m.Perfil),
   },
   {
+    path: 'panel-de-control',
+    loadComponent: () => import('./pages/panel-de-control/panel-de-control').then((m) => m.PanelDeControl),
+  },
+  {
     path: '**',
     redirectTo: '',
   },
