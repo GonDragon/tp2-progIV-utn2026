@@ -39,6 +39,7 @@ export class PublicacionComponent implements OnInit, OnChanges {
   // Estado de comentarios
   comentarios: ComentarioItem[] = [];
   cargandoComentarios: boolean = false;
+  cargandoMasComentarios: boolean = false;
   paginaActualComentarios: number = 1;
   limiteComentarios: number = 10;
   hayMasComentarios: boolean = false;
@@ -135,9 +136,10 @@ export class PublicacionComponent implements OnInit, OnChanges {
   cargarComentarios(): void {
     if (!this.publicacion || !this.publicacion._id) return;
     this.cargandoComentarios = true;
+    this.paginaActualComentarios = 1;
     this.publicacionesService
       .getComentarios(this.publicacion._id, {
-        page: this.paginaActualComentarios,
+        page: 1,
         limit: this.limiteComentarios,
       })
       .subscribe({
@@ -154,18 +156,36 @@ export class PublicacionComponent implements OnInit, OnChanges {
       });
   }
 
-  paginaAnteriorComentarios(): void {
-    if (this.paginaActualComentarios > 1 && !this.cargandoComentarios) {
-      this.paginaActualComentarios--;
-      this.cargarComentarios();
+  cargarMasComentarios(): void {
+    if (
+      !this.publicacion ||
+      !this.publicacion._id ||
+      this.cargandoMasComentarios ||
+      !this.hayMasComentarios
+    ) {
+      return;
     }
-  }
 
-  paginaSiguienteComentarios(): void {
-    if (this.hayMasComentarios && !this.cargandoComentarios) {
-      this.paginaActualComentarios++;
-      this.cargarComentarios();
-    }
+    this.cargandoMasComentarios = true;
+    const siguientePagina = this.paginaActualComentarios + 1;
+    this.publicacionesService
+      .getComentarios(this.publicacion._id, {
+        page: siguientePagina,
+        limit: this.limiteComentarios,
+      })
+      .subscribe({
+        next: (nuevosComentarios) => {
+          const batch = nuevosComentarios || [];
+          this.comentarios = [...this.comentarios, ...batch];
+          this.paginaActualComentarios = siguientePagina;
+          this.hayMasComentarios = batch.length === this.limiteComentarios;
+          this.cargandoMasComentarios = false;
+        },
+        error: (err) => {
+          console.error('Error al cargar más comentarios:', err);
+          this.cargandoMasComentarios = false;
+        },
+      });
   }
 
   enviarComentario(): void {

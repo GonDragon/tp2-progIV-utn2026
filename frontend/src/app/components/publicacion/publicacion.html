@@ -133,28 +133,22 @@
                 </button>
               </div>
             </div>
-          </div>
-        </div>
+            <!-- Botón cargar más o indicador de carga adicional dentro de la caja de comentarios -->
+            <div *ngIf="cargandoMasComentarios" class="comentarios-mas-loading">
+              <div class="xp-spinner"></div>
+              <span>Cargando más comentarios...</span>
+            </div>
 
-        <!-- Paginación de comentarios -->
-        <div *ngIf="comentarios.length > 0 || paginaActualComentarios > 1" class="comentarios-paginacion">
-          <button
-            type="button"
-            class="xp-button comentarios-page-btn"
-            (click)="paginaAnteriorComentarios()"
-            [disabled]="paginaActualComentarios <= 1 || cargandoComentarios"
-          >
-            ◀ Anterior
-          </button>
-          <span class="comentarios-page-info">Página {{ paginaActualComentarios }}</span>
-          <button
-            type="button"
-            class="xp-button comentarios-page-btn"
-            (click)="paginaSiguienteComentarios()"
-            [disabled]="!hayMasComentarios || cargandoComentarios"
-          >
-            Siguiente ▶
-          </button>
+            <div *ngIf="hayMasComentarios && !cargandoMasComentarios" class="comentarios-cargar-mas-wrapper">
+              <button
+                type="button"
+                class="xp-button comentarios-cargar-mas-btn"
+                (click)="cargarMasComentarios()"
+              >
+                Cargar más
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Formulario para agregar nuevo comentario debajo de la caja de comentarios -->
