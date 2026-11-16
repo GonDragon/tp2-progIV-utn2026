@@ -1,6 +1,8 @@
 .estadisticas-window {
   width: 100%;
-  min-height: 380px;
+  height: 650px;
+  max-height: 85vh;
+  min-height: 400px;
   background-color: var(--xp-window-bg, #ece9d8);
   display: flex;
   flex-direction: column;
@@ -12,10 +14,26 @@
   object-fit: contain;
 }
 
+.estadisticas-tabs {
+  padding: 8px 10px 0 10px;
+  background-color: var(--xp-window-bg, #ece9d8);
+  border-bottom: 1px solid #7f9db9;
+  flex-shrink: 0;
+}
+
+.xp-tab-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
 .xp-window-content {
   flex: 1;
   background-color: var(--xp-window-bg, #ece9d8);
   padding: 16px;
-  min-height: 320px;
+  min-height: 0;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }

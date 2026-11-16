@@ -12,8 +12,45 @@
     </div>
   </div>
 
+  <!-- Pestañas de la ventana -->
+  <div class="estadisticas-tabs">
+    <div class="xp-tab-container">
+      <button
+        type="button"
+        class="xp-tab-button"
+        [class.active]="tabActiva === 'publicaciones'"
+        (click)="cambiarTab('publicaciones')"
+      >
+        <img src="/img/iconos/est-publicaciones.png" alt="Publicaciones" class="xp-tab-icon" />
+        <span>Publicaciones</span>
+      </button>
+
+      <button
+        type="button"
+        class="xp-tab-button"
+        [class.active]="tabActiva === 'comentarios'"
+        (click)="cambiarTab('comentarios')"
+      >
+        <img src="/img/iconos/est-comentarios.png" alt="Comentarios" class="xp-tab-icon" />
+        <span>Comentarios</span>
+      </button>
+
+      <button
+        type="button"
+        class="xp-tab-button"
+        [class.active]="tabActiva === 'comentarios-por-pub'"
+        (click)="cambiarTab('comentarios-por-pub')"
+      >
+        <img src="/img/iconos/est-comentarios-por-pub.png" alt="Comentarios por Publicacion" class="xp-tab-icon" />
+        <span>Comentarios por Publicacion</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Contenido de la ventana -->
   <div class="xp-window-content">
-    <!-- Ventana de Windows XP sin contenido inicial -->
+    <app-est-publicaciones *ngIf="tabActiva === 'publicaciones'"></app-est-publicaciones>
+    <app-est-comentarios *ngIf="tabActiva === 'comentarios'"></app-est-comentarios>
+    <app-est-comentarios-por-pub *ngIf="tabActiva === 'comentarios-por-pub'"></app-est-comentarios-por-pub>
   </div>
 </div>
