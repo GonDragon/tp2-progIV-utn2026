@@ -1,9 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 
 const MENSAJES_ASISTENTE: Record<string, string> = {
-  'campo-texto': 'Eso es un campo de texto',
+  'campo-comentario': 'Recuerda que todos van a poder leer lo que escribas aquí.',
   'contraseña': 'Hint: Si olvidaste tu contraseña, puedes ir olvidándote también de tu cuenta.',
-  'boton-enviar': 'Haz clic aquí para guardar tus cambios',
+  'boton-enviar': '¿No te vas a arrepentir?'
 };
 
 @Injectable({
