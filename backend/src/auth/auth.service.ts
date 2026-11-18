@@ -65,6 +65,9 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException('Usuario no encontrado');
       }
+      if (user.habilitado === false) {
+        throw new UnauthorizedException('su usuario se encuentra deshabilitado');
+      }
       return user;
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -82,7 +85,27 @@ export class AuthService {
 
     try {
       const payload = await this.jwtService.verifyAsync(token);
+      let user = null;
+      if (payload.sub && Types.ObjectId.isValid(payload.sub)) {
+        user = await this.usuarioModel
+          .findById(payload.sub)
+          .select('-password -__v')
+          .exec();
+      }
+      if (!user && payload.username) {
+        user = await this.usuarioModel
+          .findOne({ username: payload.username })
+          .select('-password -__v')
+          .exec();
+      }
+      if (!user) {
+        throw new UnauthorizedException('Usuario no encontrado');
+      }
+      if (user.habilitado === false) {
+        throw new UnauthorizedException('su usuario se encuentra deshabilitado');
+      }
       const { iat, exp, nbf, jti, ...cleanPayload } = payload;
+      cleanPayload.habilitado = user.habilitado;
       return await this.jwtService.signAsync(cleanPayload);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -103,6 +126,10 @@ export class AuthService {
     ) {
       // Devuelve un HTTP 401 Unauthorized
       throw new UnauthorizedException('Credenciales incorrectas');
+    }
+
+    if (user.habilitado === false) {
+      throw new UnauthorizedException('su usuario se encuentra deshabilitado');
     }
 
     return this.generateToken(user);
@@ -146,6 +173,7 @@ export class AuthService {
       username: usuario.username,
       sub: usuario._id,
       rol: usuario.rol || 'usuario',
+      habilitado: usuario.habilitado,
     };
     return this.jwtService.signAsync(payload);
   }

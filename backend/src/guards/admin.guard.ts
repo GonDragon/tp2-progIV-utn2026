@@ -23,6 +23,7 @@ export class AdminGuard implements CanActivate {
 
     try {
       const payload = this.jwtService.verify(token);
+      console.log("Se verificó la siguiente payload")
       console.log(payload);
 
       if (payload.rol !== 'admin') {
@@ -32,13 +33,15 @@ export class AdminGuard implements CanActivate {
       context.switchToHttp().getRequest().user = payload;
       return true;
     } catch (e) {
+      console.log(e);
       throw new UnauthorizedException();
     }
   }
 
   extractTokenFromHeader(context: ExecutionContext): string | null {
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers['Authorization'];
+    const authHeader =
+      request.headers['authorization'] || request.headers['Authorization'];
 
     if (typeof authHeader === 'string') {
       const parts = authHeader.split(' ');
