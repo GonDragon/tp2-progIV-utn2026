@@ -3,12 +3,16 @@ import { Router } from '@angular/router';
 import { PublicacionItem } from '../../services/publicaciones';
 import { UsuarioToken } from '../../services/autenticacion';
 import { NombreArchivoPipe } from '../../pipes/nombre-archivo-pipe';
+import { CensuraPipe } from '../../pipes/censura-pipe';
 
 @Component({
   selector: 'app-icono',
   templateUrl: './icono.html',
   styleUrl: './icono.css',
-  imports: [NombreArchivoPipe],
+  imports: [NombreArchivoPipe, CensuraPipe],
+  host: {
+    '[title]': 'publicacion?.contenido || ""',
+  },
 })
 export class IconoComponent {
   private router = inject(Router);

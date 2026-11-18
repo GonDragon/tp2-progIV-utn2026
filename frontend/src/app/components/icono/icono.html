@@ -1,6 +1,7 @@
 <div
   class="xp-icono"
   tabindex="0"
+  [title]="publicacion.contenido | censura"
   (click)="abrirPublicacion()"
   (keydown.enter)="abrirPublicacion()"
   (keydown.space)="abrirPublicacion()"
@@ -43,7 +44,7 @@
         </button>
     </div>
 
-    <span class="xp-icono-titulo" [title]="publicacion.titulo">
+    <span class="xp-icono-titulo">
     {{ publicacion.titulo | nombreArchivo }}
   </span>
 </div>
