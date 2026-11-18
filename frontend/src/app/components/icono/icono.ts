@@ -2,11 +2,13 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { PublicacionItem } from '../../services/publicaciones';
 import { UsuarioToken } from '../../services/autenticacion';
+import { NombreArchivoPipe } from '../../pipes/nombre-archivo-pipe';
 
 @Component({
   selector: 'app-icono',
   templateUrl: './icono.html',
   styleUrl: './icono.css',
+  imports: [NombreArchivoPipe],
 })
 export class IconoComponent {
   private router = inject(Router);
