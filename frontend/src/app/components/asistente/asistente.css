@@ -1,0 +1,26 @@
+:host {
+  position: fixed;
+  right: 2rem;
+  bottom: 3rem;
+  z-index: 1000;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  :host {
+    display: block;
+  }
+}
+
+.asistente-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.asistente-img {
+  max-width: 150px;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
