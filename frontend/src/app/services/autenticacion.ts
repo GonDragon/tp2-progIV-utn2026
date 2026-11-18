@@ -131,13 +131,7 @@ export class AutenticacionService {
   }
 
   public isLoggedIn(): boolean {
-    const user = this.getUsuarioActual();
-    if (!user) return false;
-    if (user.exp && user.exp * 1000 < Date.now()) {
-      this.logout();
-      return false;
-    }
-    return true;
+    return this.getUsuarioActual() !== null;
   }
 
   private guardarToken(token: string): void {
@@ -149,7 +143,7 @@ export class AutenticacionService {
     this.detenerTimerSesion();
     this.ignoradoSesion = false;
 
-    const user = this.getUsuarioActual();
+    const user = this.usuarioState();
     if (!user || !user.exp) {
       return;
     }
@@ -169,7 +163,7 @@ export class AutenticacionService {
   }
 
   private verificarTiempoSesion(): void {
-    const user = this.getUsuarioActual();
+    const user = this.usuarioState();
     if (!user || !user.exp) {
       this.detenerTimerSesion();
       return;
@@ -180,7 +174,6 @@ export class AutenticacionService {
 
     if (segundosRestantes <= 0) {
       this.detenerTimerSesion();
-      // Cuando el contador llega a cero, el toast simplemente se cierra, sin hacer nada.
       return;
     }
 
