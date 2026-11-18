@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Backend } from './backend';
 import { Observable, tap } from 'rxjs';
+import { Notificacion } from './notificacion';
 
 export interface LoginPayload {
   username: string;
@@ -36,13 +37,18 @@ export interface AuthResponse {
 })
 export class AutenticacionService {
   private backend = inject(Backend);
+  private notificacion = inject(Notificacion);
   private readonly TOKEN_KEY = 'jwt_token';
+
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
+  private ignoradoSesion = false;
 
   public login(credenciales: LoginPayload): Observable<AuthResponse> {
     return this.backend.post<AuthResponse>('/auth/login', credenciales).pipe(
       tap((response) => {
         if (response && response.token) {
           this.guardarToken(response.token);
+          this.iniciarTimerSesion();
         }
       }),
     );
@@ -53,6 +59,19 @@ export class AutenticacionService {
       tap((response) => {
         if (response && response.token) {
           this.guardarToken(response.token);
+          this.iniciarTimerSesion();
+        }
+      }),
+    );
+  }
+
+  public refrescar(): Observable<AuthResponse> {
+    const token = this.getToken();
+    return this.backend.post<AuthResponse>('/auth/refrescar', { token }).pipe(
+      tap((response) => {
+        if (response && response.token) {
+          this.guardarToken(response.token);
+          this.iniciarTimerSesion();
         }
       }),
     );
@@ -63,6 +82,7 @@ export class AutenticacionService {
   }
 
   public logout(): void {
+    this.detenerTimerSesion();
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
@@ -75,10 +95,15 @@ export class AutenticacionService {
     if (!token) return null;
 
     try {
-      const payloadBase64 = token.split('.')[1];
-      if (!payloadBase64) return null;
+      const parts = token.split('.');
+      if (parts.length < 2) return null;
 
-      const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+      let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const pad = base64.length % 4;
+      if (pad) {
+        base64 += '='.repeat(4 - pad);
+      }
+
       const jsonPayload = decodeURIComponent(
         atob(base64)
           .split('')
@@ -108,5 +133,71 @@ export class AutenticacionService {
 
   private guardarToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  public iniciarTimerSesion(): void {
+    this.detenerTimerSesion();
+    this.ignoradoSesion = false;
+
+    const user = this.getUsuarioActual();
+    if (!user || !user.exp) {
+      return;
+    }
+
+    this.verificarTiempoSesion();
+    this.timerInterval = setInterval(() => {
+      this.verificarTiempoSesion();
+    }, 1000);
+  }
+
+  public detenerTimerSesion(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+    this.notificacion.cerrarSiEsSesion();
+  }
+
+  private verificarTiempoSesion(): void {
+    const user = this.getUsuarioActual();
+    if (!user || !user.exp) {
+      this.detenerTimerSesion();
+      return;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const segundosRestantes = user.exp - now;
+
+    if (segundosRestantes <= 0) {
+      this.detenerTimerSesion();
+      // Cuando el contador llega a cero, el toast simplemente se cierra, sin hacer nada.
+      return;
+    }
+
+    if (segundosRestantes <= 20) {
+      if (!this.ignoradoSesion) {
+        this.mostrarToastExpiracion(segundosRestantes);
+      }
+    } else {
+      this.notificacion.cerrarSiEsSesion();
+    }
+  }
+
+  private mostrarToastExpiracion(segundos: number): void {
+    const mensaje = `Tu sesión está por expirar en ${segundos} segundos.`;
+    this.notificacion.showSessionTimer(
+      mensaje,
+      () => {
+        this.ignoradoSesion = true;
+        this.notificacion.close();
+      },
+      () => {
+        this.refrescar().subscribe({
+          error: (err) => {
+            console.error('Error al extender la sesión:', err);
+          },
+        });
+      },
+    );
   }
 }

@@ -7,6 +7,7 @@ import { Notificacion } from '../../services/notificacion';
   standalone: true,
   imports: [AsyncPipe],
   templateUrl: './toast-notification.html',
+  styleUrl: './toast-notification.css',
 })
 export class ToastNotificationComponent {
   constructor(public notificacion: Notificacion) {}

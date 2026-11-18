@@ -13,7 +13,7 @@ import { PasswordHasher } from '@nestjs/authentication';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '20s' },
+      signOptions: { expiresIn: '30s' },
     }),
     MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
   ],

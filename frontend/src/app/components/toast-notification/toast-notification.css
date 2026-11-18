@@ -78,9 +78,18 @@
   border-top: 1px solid #d0ccba;
   display: flex;
   justify-content: center;
+  gap: 8px;
   box-shadow: inset 0 1px 0px #ffffff;
 }
 
 .toast-btn-ok {
   min-width: 84px;
+}
+
+.toast-btn-ignore {
+  min-width: 84px;
+}
+
+.toast-btn-extend {
+  min-width: 110px;
 }

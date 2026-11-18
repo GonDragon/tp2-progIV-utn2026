@@ -34,6 +34,7 @@ export class Loading implements OnInit {
       }).subscribe({
         next: ({ auth }) => {
           if (auth) {
+            this.authService.iniciarTimerSesion();
             this.cdr.detectChanges();
             this.router.navigate(['/publicaciones']);
           } else {

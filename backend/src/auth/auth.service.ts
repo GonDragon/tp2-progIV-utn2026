@@ -30,11 +30,7 @@ export class AuthService {
     if (body && typeof body.token === 'string' && body.token.trim() !== '') {
       return body.token.trim();
     }
-    const authHeader =
-      req.headers['authorization'] ||
-      req.headers['Authorization'] ||
-      req.headers['authentication'] ||
-      req.headers['Authentication'];
+    const authHeader = req.headers['Authorization'];
     if (typeof authHeader === 'string') {
       const parts = authHeader.split(' ');
       if (parts.length === 2 && parts[0].toLowerCase() === 'bearer') {
@@ -87,7 +83,7 @@ export class AuthService {
     try {
       const payload = await this.jwtService.verifyAsync(token);
       const { iat, exp, nbf, jti, ...cleanPayload } = payload;
-      return await this.jwtService.signAsync(cleanPayload, { expiresIn: '31d' });
+      return await this.jwtService.signAsync(cleanPayload);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
@@ -151,6 +147,6 @@ export class AuthService {
       sub: usuario._id,
       rol: usuario.rol || 'usuario',
     };
-    return this.jwtService.signAsync(payload, { expiresIn: '31d' });
+    return this.jwtService.signAsync(payload);
   }
 }

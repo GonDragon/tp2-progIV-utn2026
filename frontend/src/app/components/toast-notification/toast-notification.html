@@ -20,7 +20,7 @@
 
                     <!-- Botón de cierre de ventana clásico XP -->
                     <button type="button"
-                            (click)="notificacion.close()"
+                            (click)="state.isSessionTimer && state.onIgnore ? state.onIgnore() : notificacion.close()"
                             class="xp-win-btn xp-win-btn-close">
                         ✕
                     </button>
@@ -51,11 +51,24 @@
 
                 <!-- Barra inferior de acciones con botón Aceptar XP -->
                 <div class="toast-footer">
-                    <button type="button"
-                            (click)="notificacion.close()"
-                            class="xp-button toast-btn-ok">
-                        Aceptar
-                    </button>
+                    @if (state.isSessionTimer) {
+                        <button type="button"
+                                (click)="state.onIgnore ? state.onIgnore() : notificacion.close()"
+                                class="xp-button toast-btn-ignore">
+                            Ignorar
+                        </button>
+                        <button type="button"
+                                (click)="state.onExtendSession ? state.onExtendSession() : null"
+                                class="xp-button toast-btn-extend">
+                            Extender sesión
+                        </button>
+                    } @else {
+                        <button type="button"
+                                (click)="notificacion.close()"
+                                class="xp-button toast-btn-ok">
+                            Aceptar
+                        </button>
+                    }
                 </div>
 
             </div>

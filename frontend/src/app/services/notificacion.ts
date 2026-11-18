@@ -7,6 +7,9 @@ export interface NotificationState {
   show: boolean;
   type: NotificationType;
   message: string;
+  isSessionTimer?: boolean;
+  onIgnore?: () => void;
+  onExtendSession?: () => void;
 }
 
 @Injectable({
@@ -17,6 +20,7 @@ export class Notificacion {
     show: false,
     type: 'info',
     message: '',
+    isSessionTimer: false,
   });
   state$ = this.state.asObservable();
 
@@ -35,13 +39,59 @@ export class Notificacion {
     this.display('error', message);
   }
 
-  private display(type: NotificationType, message: string) {
-    this.state.next({ show: true, type, message });
-
-    // Si ya había un toast visible, cancelamos su temporizador de cierre
+  showSessionTimer(
+    message: string,
+    onIgnore?: () => void,
+    onExtendSession?: () => void,
+  ) {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
+      this.timeoutId = null;
     }
+    const current = this.state.getValue();
+    if (current.show && current.isSessionTimer) {
+      this.state.next({
+        ...current,
+        message,
+        ...(onIgnore ? { onIgnore } : {}),
+        ...(onExtendSession ? { onExtendSession } : {}),
+      });
+      return;
+    }
+    this.state.next({
+      show: true,
+      type: 'warning',
+      message,
+      isSessionTimer: true,
+      onIgnore,
+      onExtendSession,
+    });
+  }
+
+  updateSessionTimerMessage(message: string) {
+    const current = this.state.getValue();
+    if (current.show && current.isSessionTimer) {
+      this.state.next({
+        ...current,
+        message,
+      });
+    }
+  }
+
+  cerrarSiEsSesion() {
+    const current = this.state.getValue();
+    if (current.show && current.isSessionTimer) {
+      this.close();
+    }
+  }
+
+  private display(type: NotificationType, message: string) {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+
+    this.state.next({ show: true, type, message, isSessionTimer: false });
 
     // Se oculta automáticamente después de 3.5 segundos
     this.timeoutId = setTimeout(() => {
@@ -50,6 +100,10 @@ export class Notificacion {
   }
 
   close() {
-    this.state.next({ show: false, type: 'info', message: '' });
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+    this.state.next({ show: false, type: 'info', message: '', isSessionTimer: false });
   }
 }
