@@ -1,3 +1,8 @@
 <div class="asistente-container">
+  @if (asistente.visible()) {
+    <div class="globo-texto">
+      {{ asistente.mensaje() }}
+    </div>
+  }
   <img src="/img/assistant.png" alt="Asistente" class="asistente-img" />
 </div>

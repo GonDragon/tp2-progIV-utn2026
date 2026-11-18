@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AsistenteService } from '../../services/asistente';
 
 @Component({
   selector: 'app-asistente',
@@ -7,4 +8,6 @@ import { Component } from '@angular/core';
   templateUrl: './asistente.html',
   styleUrl: './asistente.css',
 })
-export class Asistente {}
+export class Asistente {
+  protected asistente = inject(AsistenteService);
+}

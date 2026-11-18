@@ -14,8 +14,52 @@
 
 .asistente-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.globo-texto {
+  position: relative;
+  background-color: #ffffe1;
+  color: #000000;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  max-width: 220px;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  word-wrap: break-word;
+}
+
+.globo-texto::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px 8px 0;
+  border-style: solid;
+  border-color: #ffffe1 transparent;
+  display: block;
+  width: 0;
+}
+
+.globo-texto::before {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 9px 9px 0;
+  border-style: solid;
+  border-color: #333333 transparent;
+  display: block;
+  width: 0;
 }
 
 .asistente-img {

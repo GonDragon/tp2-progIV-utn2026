@@ -2,11 +2,12 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AutenticacionService } from '../../services/autenticacion';
+import { HintAsistente } from '../../directivas/hint-asistente';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, HintAsistente],
   templateUrl: './login.html',
   host: {
     style:
