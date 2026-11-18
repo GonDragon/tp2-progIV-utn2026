@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  inject,
+  ChangeDetectorRef,
+  HostListener,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -21,18 +30,18 @@ import { Notificacion } from '../../services/notificacion';
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
-export class Publicaciones implements OnInit, OnDestroy {
+export class Publicaciones implements OnInit, AfterViewInit, OnDestroy {
   private publicacionesService = inject(PublicacionesService);
   private authService = inject(AutenticacionService);
   private notificacion = inject(Notificacion);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   publicaciones: PublicacionItem[] = [];
   cargando = false;
-  paginaActual = 1;
-  limitePorPagina = 6;
+  limitePorPagina = 32;
   hayMasPublicaciones = true;
   criterioOrden: 'fecha' | 'likes' = 'fecha';
 
@@ -42,12 +51,23 @@ export class Publicaciones implements OnInit, OnDestroy {
   publicacionModal: PublicacionItem | null = null;
   cargandoModal = false;
   private routeSub?: Subscription;
+  private scrollCleanups: Array<() => void> = [];
 
   @HostListener('document:keydown.escape')
   onEscapePress(): void {
     if (this.publicacionModal || this.cargandoModal) {
       this.cerrarModal();
     }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.verificarYLlenarScroll();
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.comprobarScrollFinal();
   }
 
   ngOnInit(): void {
@@ -94,8 +114,19 @@ export class Publicaciones implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit(): void {
+    const container = this.getScrollContainer();
+    if (container) {
+      const scrollHandler = () => this.comprobarScrollFinal();
+      container.addEventListener('scroll', scrollHandler, { passive: true });
+      this.scrollCleanups.push(() => container.removeEventListener('scroll', scrollHandler));
+    }
+  }
+
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
+    this.scrollCleanups.forEach((cleanup) => cleanup());
+    this.scrollCleanups = [];
   }
 
   cerrarModal(): void {
@@ -108,13 +139,20 @@ export class Publicaciones implements OnInit, OnDestroy {
   cambiarOrden(nuevoOrden: 'fecha' | 'likes'): void {
     if (this.criterioOrden === nuevoOrden) return;
     this.criterioOrden = nuevoOrden;
-    this.paginaActual = 1;
     this.cargarPublicaciones();
   }
 
   cargarPublicaciones(): void {
+    this.publicaciones = [];
+    this.hayMasPublicaciones = true;
+    this.cargarMasPublicaciones();
+  }
+
+  cargarMasPublicaciones(): void {
+    if (this.cargando || !this.hayMasPublicaciones) return;
+
     this.cargando = true;
-    const offset = (this.paginaActual - 1) * this.limitePorPagina;
+    const offset = this.publicaciones.length;
     const orderBy = this.criterioOrden === 'likes' ? 'likes' : undefined;
 
     this.publicacionesService
@@ -125,10 +163,17 @@ export class Publicaciones implements OnInit, OnDestroy {
       })
       .subscribe({
         next: (data) => {
-          this.publicaciones = data || [];
-          this.hayMasPublicaciones = this.publicaciones.length === this.limitePorPagina;
+          const nuevas = data || [];
+          this.publicaciones = [...this.publicaciones, ...nuevas];
+          if (nuevas.length < this.limitePorPagina) {
+            this.hayMasPublicaciones = false;
+          }
           this.cargando = false;
           this.cdr.detectChanges();
+
+          setTimeout(() => {
+            this.verificarYLlenarScroll();
+          }, 50);
         },
         error: (err) => {
           this.cargando = false;
@@ -138,17 +183,57 @@ export class Publicaciones implements OnInit, OnDestroy {
       });
   }
 
-  paginaAnterior(): void {
-    if (this.paginaActual > 1 && !this.cargando) {
-      this.paginaActual--;
-      this.cargarPublicaciones();
+  private getScrollContainer(): HTMLElement | null {
+    const layoutMain = document.querySelector<HTMLElement>('.layout-main');
+    if (layoutMain) {
+      return layoutMain;
+    }
+    let el = this.elementRef.nativeElement.parentElement;
+    while (el && el !== document.body) {
+      const style = window.getComputedStyle(el);
+      if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  private tieneScroll(): boolean {
+    const container = this.getScrollContainer();
+    if (container) {
+      return container.scrollHeight > container.clientHeight;
+    }
+    return document.documentElement.scrollHeight > window.innerHeight;
+  }
+
+  private verificarYLlenarScroll(): void {
+    if (this.cargando || !this.hayMasPublicaciones) return;
+    if (!this.tieneScroll()) {
+      this.cargarMasPublicaciones();
     }
   }
 
-  paginaSiguiente(): void {
-    if (this.hayMasPublicaciones && !this.cargando) {
-      this.paginaActual++;
-      this.cargarPublicaciones();
+  private comprobarScrollFinal(): void {
+    if (this.cargando || !this.hayMasPublicaciones) return;
+
+    const container = this.getScrollContainer();
+    if (container) {
+      if (container.scrollHeight <= container.clientHeight) {
+        return;
+      }
+      const scrollPos = container.scrollTop + container.clientHeight;
+      if (scrollPos >= container.scrollHeight - 100) {
+        this.cargarMasPublicaciones();
+      }
+    } else {
+      if (document.documentElement.scrollHeight <= window.innerHeight) {
+        return;
+      }
+      const scrollPos = (window.scrollY || document.documentElement.scrollTop) + window.innerHeight;
+      if (scrollPos >= document.documentElement.scrollHeight - 100) {
+        this.cargarMasPublicaciones();
+      }
     }
   }
 
@@ -212,13 +297,13 @@ export class Publicaciones implements OnInit, OnDestroy {
         if (this.publicacionModal?._id === pub._id) {
           this.cerrarModal();
         }
-        if (this.publicaciones.length === 0 && this.paginaActual > 1) {
-          this.paginaActual--;
-          this.cargarPublicaciones();
-        } else if (this.publicaciones.length === 0) {
+        if (this.publicaciones.length === 0) {
           this.cargarPublicaciones();
         } else {
           this.cdr.detectChanges();
+          setTimeout(() => {
+            this.verificarYLlenarScroll();
+          }, 50);
         }
       },
       error: (err) => {

@@ -65,17 +65,13 @@
           <span>❤️ Más populares</span>
         </button>
       </div>
-
-      <div class="publicaciones-page-indicator">
-        <span>Página {{ paginaActual }}</span>
-      </div>
     </div>
 
     <!-- Vista de Contenido / Feed -->
     <div class="publicaciones-feed-area">
 
-      <!-- Estado de carga -->
-      <div *ngIf="cargando" class="publicaciones-status-dialog">
+      <!-- Estado de carga inicial -->
+      <div *ngIf="cargando && publicaciones.length === 0" class="publicaciones-status-dialog">
         <div class="xp-spinner"></div>
         <p class="publicaciones-status-title">Buscando publicaciones en el servidor...</p>
         <p class="publicaciones-status-subtitle">Por favor espere mientras se cargan los datos.</p>
@@ -91,7 +87,7 @@
       </div>
 
       <!-- Grilla de Publicaciones -->
-      <div *ngIf="!cargando && publicaciones.length > 0" class="publicaciones-grid">
+      <div *ngIf="publicaciones.length > 0" class="publicaciones-grid">
         <app-icono
           *ngFor="let pub of publicaciones"
           [publicacion]="pub"
@@ -103,33 +99,12 @@
         />
       </div>
 
-    </div>
-
-    <!-- Paginación estilo Barra de Navegación XP -->
-    <div *ngIf="!cargando && (publicaciones.length > 0 || paginaActual > 1)" class="publicaciones-pagination-bar">
-      <button
-        type="button"
-        (click)="paginaAnterior()"
-        [disabled]="paginaActual <= 1 || cargando"
-        class="xp-button publicaciones-page-btn"
-      >
-        <span>◀</span>
-        <span>Anterior</span>
-      </button>
-
-      <div class="publicaciones-page-badge">
-        <span>Página {{ paginaActual }}</span>
+      <!-- Indicador de carga adicional (scroll infinito) -->
+      <div *ngIf="cargando && publicaciones.length > 0" class="publicaciones-status-dialog">
+        <div class="xp-spinner"></div>
+        <p class="publicaciones-status-title">Cargando más publicaciones...</p>
       </div>
 
-      <button
-        type="button"
-        (click)="paginaSiguiente()"
-        [disabled]="!hayMasPublicaciones || cargando"
-        class="xp-button publicaciones-page-btn"
-      >
-        <span>Siguiente</span>
-        <span>▶</span>
-      </button>
     </div>
 
     <!-- Barra de Estado Inferior XP (Statusbar) -->
