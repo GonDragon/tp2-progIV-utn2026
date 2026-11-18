@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AutenticacionService } from '../../services/autenticacion';
 
 @Component({
   selector: 'app-layout',
@@ -8,4 +9,12 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   templateUrl: './layout.html',
   styleUrls: ['./layout.css'],
 })
-export class Layout {}
+export class Layout {
+  private authService = inject(AutenticacionService);
+  private router = inject(Router);
+
+  public logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+}

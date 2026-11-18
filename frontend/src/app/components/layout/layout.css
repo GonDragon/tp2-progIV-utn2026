@@ -79,3 +79,20 @@
 .layout-nav-item .xp-task-button {
   width: 100%;
 }
+
+.layout-nav-item .xp-task-button-logout {
+  background: linear-gradient(180deg, #e76c53 0%, #d83d1c 35%, #b21e02 70%, #c82607 100%);
+  border: 1px solid #7a1100;
+  cursor: pointer;
+}
+
+.layout-nav-item .xp-task-button-logout:hover {
+  background: linear-gradient(180deg, #f2826c 0%, #e64e2d 35%, #c82607 70%, #d83d1c 100%);
+}
+
+.layout-nav-item .xp-task-button-logout:active {
+  background: linear-gradient(180deg, #7a1100 0%, #9c1700 40%, #b21e02 100%);
+  border-color: #520b00;
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.7);
+  border-bottom: 2px solid #ffcc00;
+}
