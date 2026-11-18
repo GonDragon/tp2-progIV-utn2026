@@ -12,7 +12,7 @@ import {
   ApexDataLabels,
   ApexTooltip,
   ApexGrid,
-  ApexMarkers,
+  ApexPlotOptions,
 } from 'ng-apexcharts';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -28,17 +28,9 @@ export type ChartOptions = {
   dataLabels: ApexDataLabels;
   tooltip: ApexTooltip;
   grid: ApexGrid;
-  markers: ApexMarkers;
+  plotOptions: ApexPlotOptions;
   colors: string[];
 };
-
-export type IntervaloTipo = 'hora' | 'dia' | 'mes';
-
-interface IntervalSlot {
-  start: string;
-  end: string;
-  label: string;
-}
 
 @Component({
   selector: 'app-est-publicaciones',
@@ -52,14 +44,13 @@ export class EstPublicaciones implements OnInit {
 
   fechaInicio: string = '';
   fechaFin: string = '';
-  intervalo: IntervaloTipo = 'dia';
   usuarioFiltro: string = '';
 
   cargando: boolean = false;
   errorMensaje: string | null = null;
-  totalPublicaciones: number = 0;
-  promedioPorIntervalo: number = 0;
-  maxPublicacionesEnPunto: number = 0;
+  totalComentarios: number = 0;
+  promedioPorUsuario: number = 0;
+  maxComentarios: number = 0;
 
   chartOptions: Partial<ChartOptions> | null = null;
 
@@ -70,30 +61,11 @@ export class EstPublicaciones implements OnInit {
 
   inicializarFechasPorDefecto(): void {
     const hoy = new Date();
-    const hace7Dias = new Date();
-    hace7Dias.setDate(hoy.getDate() - 6);
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hoy.getDate() - 29);
 
     this.fechaFin = this.formatDateToInput(hoy);
-    this.fechaInicio = this.formatDateToInput(hace7Dias);
-  }
-
-  onIntervaloChange(): void {
-    const hoy = new Date();
-    if (this.intervalo === 'hora') {
-      const hoyInicio = new Date();
-      this.fechaInicio = this.formatDateToInput(hoyInicio);
-      this.fechaFin = this.formatDateToInput(hoy);
-    } else if (this.intervalo === 'dia') {
-      const hace7Dias = new Date();
-      hace7Dias.setDate(hoy.getDate() - 6);
-      this.fechaInicio = this.formatDateToInput(hace7Dias);
-      this.fechaFin = this.formatDateToInput(hoy);
-    } else if (this.intervalo === 'mes') {
-      const inicioAnio = new Date(hoy.getFullYear(), 0, 1);
-      this.fechaInicio = this.formatDateToInput(inicioAnio);
-      this.fechaFin = this.formatDateToInput(hoy);
-    }
-    this.consultarEstadisticas();
+    this.fechaInicio = this.formatDateToInput(hace30Dias);
   }
 
   consultarEstadisticas(): void {
@@ -123,47 +95,59 @@ export class EstPublicaciones implements OnInit {
       return;
     }
 
-    const slots = this.generarSlots(startDate, endDate, this.intervalo);
-
-    if (slots.length === 0) {
-      this.errorMensaje = 'No se pudieron generar intervalos con el rango seleccionado.';
-      this.cdr.detectChanges();
-      return;
-    }
-
-    if (slots.length > 500) {
-      this.errorMensaje = `El rango seleccionado genera ${slots.length} intervalos. Por favor seleccione un rango menor o un intervalo más amplio (día/mes).`;
-      this.cdr.detectChanges();
-      return;
-    }
-
     this.cargando = true;
     this.cdr.detectChanges();
 
-    const peticiones = slots.map((slot) =>
-      this.publicacionesService
-        .getCantidadPublicaciones({
-          fecha_inicio: slot.start,
-          fecha_fin: slot.end,
-          usuario: this.usuarioFiltro.trim() || undefined,
-        })
-        .pipe(
-          catchError((err) => {
-            console.error('Error al obtener cantidad para intervalo:', slot, err);
-            return of({ cantidad: 0 });
-          }),
-        ),
-    );
+    const topObservable = this.publicacionesService
+      .getTopUsuariosComentarios({
+        fecha_inicio: this.fechaInicio,
+        fecha_fin: this.fechaFin,
+        limite: 5,
+      })
+      .pipe(
+        catchError((err) => {
+          console.error('Error al obtener top usuarios con más comentarios:', err);
+          return of([]);
+        }),
+      );
 
-    forkJoin(peticiones).subscribe({
-      next: (respuestas) => {
-        const cantidades = respuestas.map((r) => r?.cantidad || 0);
-        this.totalPublicaciones = cantidades.reduce((acc, c) => acc + c, 0);
-        this.promedioPorIntervalo =
-          cantidades.length > 0 ? Number((this.totalPublicaciones / cantidades.length).toFixed(1)) : 0;
-        this.maxPublicacionesEnPunto = cantidades.length > 0 ? Math.max(...cantidades) : 0;
+    const usuarioOpcional = this.usuarioFiltro.trim();
+    const opcionalObservable = usuarioOpcional
+      ? this.publicacionesService
+          .getCantidadComentarios({
+            fecha_inicio: this.fechaInicio,
+            fecha_fin: this.fechaFin,
+            usuario: usuarioOpcional,
+          })
+          .pipe(
+            catchError((err) => {
+              console.error('Error al obtener comentarios para usuario opcional:', err);
+              return of({ cantidad: 0 });
+            }),
+          )
+      : of(null);
 
-        const categorias = slots.map((s) => s.label);
+    forkJoin({
+      top: topObservable,
+      opcional: opcionalObservable,
+    }).subscribe({
+      next: ({ top, opcional }) => {
+        const top5 = top || [];
+        const categorias: string[] = top5.map((u) => u.username || 'Desconocido');
+        const cantidades: number[] = top5.map((u) => u.cantidad || 0);
+
+        if (usuarioOpcional && opcional !== null) {
+          categorias.push(usuarioOpcional);
+          cantidades.push(opcional.cantidad || 0);
+        }
+
+        this.totalComentarios = cantidades.reduce((acc, c) => acc + c, 0);
+        this.promedioPorUsuario =
+          cantidades.length > 0
+            ? Number((this.totalComentarios / cantidades.length).toFixed(1))
+            : 0;
+        this.maxComentarios = cantidades.length > 0 ? Math.max(...cantidades) : 0;
+
         this.configurarGrafico(categorias, cantidades);
         this.cargando = false;
         this.cdr.detectChanges();
@@ -177,72 +161,16 @@ export class EstPublicaciones implements OnInit {
     });
   }
 
-  private generarSlots(startDate: Date, endDate: Date, intervalo: IntervaloTipo): IntervalSlot[] {
-    const slots: IntervalSlot[] = [];
-
-    if (intervalo === 'hora') {
-      const current = new Date(startDate.getTime());
-      while (current <= endDate) {
-        const slotStart = new Date(current.getTime());
-        const slotEnd = new Date(current.getTime() + 60 * 60 * 1000 - 1);
-        const label = this.formatHourLabel(slotStart);
-        slots.push({
-          start: slotStart.toISOString(),
-          end: slotEnd.toISOString(),
-          label,
-        });
-        current.setTime(current.getTime() + 60 * 60 * 1000);
-      }
-    } else if (intervalo === 'dia') {
-      const current = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0, 0);
-      const targetEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999);
-
-      while (current <= targetEnd) {
-        const slotStart = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 0, 0, 0, 0);
-        const slotEnd = new Date(current.getFullYear(), current.getMonth(), current.getDate(), 23, 59, 59, 999);
-        const label = this.formatDayLabel(slotStart);
-        slots.push({
-          start: slotStart.toISOString(),
-          end: slotEnd.toISOString(),
-          label,
-        });
-        current.setDate(current.getDate() + 1);
-      }
-    } else if (intervalo === 'mes') {
-      const current = new Date(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0);
-      const targetEnd = new Date(endDate.getFullYear(), endDate.getMonth(), 1, 0, 0, 0, 0);
-
-      while (current <= targetEnd) {
-        const y = current.getFullYear();
-        const m = current.getMonth();
-        const slotStart = new Date(y, m, 1, 0, 0, 0, 0);
-        const slotEnd = new Date(y, m + 1, 0, 23, 59, 59, 999);
-        const label = this.formatMonthLabel(slotStart);
-        slots.push({
-          start: slotStart.toISOString(),
-          end: slotEnd.toISOString(),
-          label,
-        });
-        current.setMonth(current.getMonth() + 1);
-      }
-    }
-
-    return slots;
-  }
-
   private configurarGrafico(categorias: string[], cantidades: number[]): void {
-    const ejeIntervalo =
-      this.intervalo === 'hora' ? 'Horas' : this.intervalo === 'dia' ? 'Días' : 'Meses';
-
     this.chartOptions = {
       series: [
         {
-          name: 'Publicaciones',
+          name: 'Comentarios',
           data: cantidades,
         },
       ],
       chart: {
-        type: 'line',
+        type: 'bar',
         height: 280,
         fontFamily: 'Tahoma, Arial, sans-serif',
         toolbar: {
@@ -258,22 +186,24 @@ export class EstPublicaciones implements OnInit {
           },
         },
       },
-      stroke: {
-        curve: 'smooth',
-        width: 3,
-      },
-      colors: ['#0055ea'],
-      markers: {
-        size: categorias.length > 40 ? 0 : 4,
-        colors: ['#0055ea'],
-        strokeColors: '#ffffff',
-        strokeWidth: 2,
-        hover: {
-          size: 6,
+      plotOptions: {
+        bar: {
+          columnWidth: '55%',
+          borderRadius: 2,
         },
       },
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ['transparent'],
+      },
+      colors: ['#0055ea'],
       dataLabels: {
-        enabled: categorias.length <= 15,
+        enabled: true,
+        style: {
+          fontSize: '11px',
+          fontFamily: 'Tahoma, Arial, sans-serif',
+        },
       },
       xaxis: {
         categories: categorias,
@@ -286,7 +216,7 @@ export class EstPublicaciones implements OnInit {
           },
         },
         title: {
-          text: `Intervalo (${ejeIntervalo})`,
+          text: 'Usuarios',
           style: {
             fontFamily: 'Tahoma, Arial, sans-serif',
             fontWeight: 600,
@@ -304,7 +234,7 @@ export class EstPublicaciones implements OnInit {
           },
         },
         title: {
-          text: 'Cantidad de publicaciones',
+          text: 'Cantidad de comentarios',
           style: {
             fontFamily: 'Tahoma, Arial, sans-serif',
             fontWeight: 600,
@@ -321,7 +251,7 @@ export class EstPublicaciones implements OnInit {
           show: true,
         },
         y: {
-          formatter: (val: number) => `${val} publicaciones`,
+          formatter: (val: number) => `${val} comentarios`,
         },
       },
     };
@@ -332,36 +262,5 @@ export class EstPublicaciones implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
-
-  private formatHourLabel(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    return `${day}/${month} ${hours}:00`;
-  }
-
-  private formatDayLabel(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    return `${day}/${month}`;
-  }
-
-  private formatMonthLabel(date: Date): string {
-    const monthNames = [
-      'Ene',
-      'Feb',
-      'Mar',
-      'Abr',
-      'May',
-      'Jun',
-      'Jul',
-      'Ago',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dic',
-    ];
-    return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
   }
 }

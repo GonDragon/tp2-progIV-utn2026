@@ -24,26 +24,11 @@
     </div>
 
     <div class="filtro-item">
-      <label for="intervalo" class="filtro-label">Intervalo:</label>
-      <select
-        id="intervalo"
-        class="xp-select"
-        [(ngModel)]="intervalo"
-        (change)="onIntervaloChange()"
-        [disabled]="cargando"
-      >
-        <option value="hora">Hora</option>
-        <option value="dia">Día</option>
-        <option value="mes">Mes</option>
-      </select>
-    </div>
-
-    <div class="filtro-item">
       <label for="usuario-filtro" class="filtro-label">Usuario (opcional):</label>
       <input
         id="usuario-filtro"
         type="text"
-        placeholder="Todos"
+        placeholder="Opcional"
         class="xp-input usuario-input"
         [(ngModel)]="usuarioFiltro"
         [disabled]="cargando"
@@ -71,16 +56,16 @@
   <!-- Métricas Rápidas -->
   <div class="est-metricas-grid" *ngIf="!cargando && !errorMensaje">
     <div class="metrica-card">
-      <span class="metrica-titulo">Total Publicaciones</span>
-      <span class="metrica-valor">{{ totalPublicaciones }}</span>
+      <span class="metrica-titulo">Total Comentarios</span>
+      <span class="metrica-valor">{{ totalComentarios }}</span>
     </div>
     <div class="metrica-card">
-      <span class="metrica-titulo">Promedio / {{ intervalo }}</span>
-      <span class="metrica-valor">{{ promedioPorIntervalo }}</span>
+      <span class="metrica-titulo">Promedio / Usuario</span>
+      <span class="metrica-valor">{{ promedioPorUsuario }}</span>
     </div>
     <div class="metrica-card">
       <span class="metrica-titulo">Pico Máximo</span>
-      <span class="metrica-valor">{{ maxPublicacionesEnPunto }}</span>
+      <span class="metrica-valor">{{ maxComentarios }}</span>
     </div>
   </div>
 
@@ -89,7 +74,7 @@
     <!-- Estado de Carga -->
     <div *ngIf="cargando" class="est-loading-overlay">
       <div class="xp-spinner"></div>
-      <span class="loading-text">Consultando publicaciones del período...</span>
+      <span class="loading-text">Consultando usuarios y comentarios del período...</span>
     </div>
 
     <!-- Gráfico ApexCharts -->
@@ -101,9 +86,9 @@
         [yaxis]="chartOptions.yaxis!"
         [stroke]="chartOptions.stroke!"
         [dataLabels]="chartOptions.dataLabels!"
+        [plotOptions]="chartOptions.plotOptions!"
         [grid]="chartOptions.grid!"
         [tooltip]="chartOptions.tooltip!"
-        [markers]="chartOptions.markers!"
         [colors]="chartOptions.colors!"
       ></apx-chart>
     </div>

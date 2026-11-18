@@ -52,6 +52,34 @@ export class PubsController {
     });
   }
 
+  @Get('topcommentsusers')
+  @UseGuards(AdminGuard)
+  async topCommentsUsers(
+    @Query('fecha_inicio') fecha_inicio?: string,
+    @Query('fecha_fin') fecha_fin?: string,
+    @Query('limite') limite?: string,
+  ) {
+    return await this.pubsService.topUsuariosComentarios({
+      fecha_inicio,
+      fecha_fin,
+      limite: limite ? Number(limite) : 5,
+    });
+  }
+
+  @Get('top-usuarios-comentarios')
+  @UseGuards(AdminGuard)
+  async topUsuariosComentarios(
+    @Query('fecha_inicio') fecha_inicio?: string,
+    @Query('fecha_fin') fecha_fin?: string,
+    @Query('limite') limite?: string,
+  ) {
+    return await this.pubsService.topUsuariosComentarios({
+      fecha_inicio,
+      fecha_fin,
+      limite: limite ? Number(limite) : 5,
+    });
+  }
+
   @Post('publicar')
   @UseGuards(AuthGuard)
   async publicar(@Body() createDto: CreatePublicacionDto, @Req() req: any) {

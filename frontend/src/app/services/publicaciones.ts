@@ -97,6 +97,27 @@ export class PublicacionesService {
     return this.backend.get<{ cantidad: number }>(endpoint);
   }
 
+  public getTopUsuariosComentarios(query: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    limite?: number;
+  } = {}): Observable<{ id_usuario: string; username: string; nombre?: string; cantidad: number }[]> {
+    const params = new URLSearchParams();
+    if (query.fecha_inicio) {
+      params.append('fecha_inicio', query.fecha_inicio);
+    }
+    if (query.fecha_fin) {
+      params.append('fecha_fin', query.fecha_fin);
+    }
+    if (query.limite !== undefined && query.limite !== null) {
+      params.append('limite', query.limite.toString());
+    }
+
+    const queryString = params.toString();
+    const endpoint = queryString ? `/pubs/topcommentsusers?${queryString}` : '/pubs/topcommentsusers';
+    return this.backend.get<{ id_usuario: string; username: string; nombre?: string; cantidad: number }[]>(endpoint);
+  }
+
   public getPublicaciones(query: GetPublicacionesQuery = {}): Observable<PublicacionItem[]> {
     const params = new URLSearchParams();
     if (query.orderBy) {

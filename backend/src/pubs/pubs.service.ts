@@ -502,4 +502,85 @@ export class PubsService {
     const cantidad = await this.comentarioModel.countDocuments(filter);
     return { cantidad };
   }
+
+  async topUsuariosComentarios(query: {
+    fecha_inicio?: string;
+    fecha_fin?: string;
+    limite?: number;
+  }): Promise<{ id_usuario: string; username: string; nombre?: string; cantidad: number }[]> {
+    const { fecha_inicio, fecha_fin, limite } = query;
+    const filter: Record<string, any> = {};
+
+    if (fecha_inicio && fecha_fin) {
+      let startDate: Date;
+      let endDate: Date;
+
+      if (
+        typeof fecha_inicio === 'string' &&
+        /^\d{4}-\d{2}-\d{2}$/.test(fecha_inicio.trim())
+      ) {
+        startDate = new Date(`${fecha_inicio.trim()}T00:00:00.000Z`);
+      } else {
+        startDate = new Date(fecha_inicio);
+      }
+
+      if (
+        typeof fecha_fin === 'string' &&
+        /^\d{4}-\d{2}-\d{2}$/.test(fecha_fin.trim())
+      ) {
+        endDate = new Date(`${fecha_fin.trim()}T23:59:59.999Z`);
+      } else {
+        endDate = new Date(fecha_fin);
+      }
+
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new BadRequestException('Formato de fecha inválido');
+      }
+
+      filter.createdAt = { $gte: startDate, $lte: endDate };
+    }
+
+    const limitNum = Math.max(1, Number(limite) || 5);
+
+    const pipeline: any[] = [];
+    if (Object.keys(filter).length > 0) {
+      pipeline.push({ $match: filter });
+    }
+
+    pipeline.push(
+      {
+        $group: {
+          _id: '$id_usuario',
+          cantidad: { $sum: 1 },
+        },
+      },
+      { $sort: { cantidad: -1 } },
+      { $limit: limitNum },
+      {
+        $lookup: {
+          from: 'usuarios',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'usuarioInfo',
+        },
+      },
+      {
+        $unwind: {
+          path: '$usuarioInfo',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          id_usuario: '$_id',
+          cantidad: 1,
+          username: { $ifNull: ['$usuarioInfo.username', 'Desconocido'] },
+          nombre: '$usuarioInfo.nombre',
+        },
+      },
+    );
+
+    return await this.comentarioModel.aggregate(pipeline);
+  }
 }
