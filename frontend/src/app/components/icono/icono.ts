@@ -4,12 +4,13 @@ import { PublicacionItem } from '../../services/publicaciones';
 import { UsuarioToken } from '../../services/autenticacion';
 import { NombreArchivoPipe } from '../../pipes/nombre-archivo-pipe';
 import { CensuraPipe } from '../../pipes/censura-pipe';
+import { BrevePipe } from '../../pipes/breve-pipe';
 
 @Component({
   selector: 'app-icono',
   templateUrl: './icono.html',
   styleUrl: './icono.css',
-  imports: [NombreArchivoPipe, CensuraPipe],
+  imports: [NombreArchivoPipe, CensuraPipe, BrevePipe],
   host: {
     '[title]': 'publicacion?.contenido || ""',
   },

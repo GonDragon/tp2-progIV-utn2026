@@ -1,7 +1,7 @@
 <div
   class="xp-icono"
   tabindex="0"
-  [title]="publicacion.contenido | censura"
+  [title]="publicacion.contenido | censura | breve"
   (click)="abrirPublicacion()"
   (keydown.enter)="abrirPublicacion()"
   (keydown.space)="abrirPublicacion()"
