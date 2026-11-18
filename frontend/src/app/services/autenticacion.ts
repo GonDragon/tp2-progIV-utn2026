@@ -88,6 +88,7 @@ export class AutenticacionService {
   public logout(): void {
     this.detenerTimerSesion();
     localStorage.removeItem(this.TOKEN_KEY);
+    this.usuarioState.set(null);
   }
 
   public getToken(): string | null {
@@ -141,6 +142,7 @@ export class AutenticacionService {
 
   private guardarToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
+    this.usuarioState.set(this._getUsuarioActual());
   }
 
   public iniciarTimerSesion(): void {
