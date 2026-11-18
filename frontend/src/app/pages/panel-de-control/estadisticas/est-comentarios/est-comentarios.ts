@@ -12,7 +12,7 @@ import {
   ApexDataLabels,
   ApexTooltip,
   ApexGrid,
-  ApexPlotOptions,
+  ApexMarkers,
 } from 'ng-apexcharts';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -24,11 +24,11 @@ export type ChartOptions = {
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   stroke: ApexStroke;
-  title: ApexTitleSubtitle;
+  title?: ApexTitleSubtitle;
   dataLabels: ApexDataLabels;
   tooltip: ApexTooltip;
   grid: ApexGrid;
-  plotOptions: ApexPlotOptions;
+  markers?: ApexMarkers;
   colors: string[];
 };
 
@@ -242,7 +242,7 @@ export class EstComentarios implements OnInit {
         },
       ],
       chart: {
-        type: 'bar',
+        type: 'line',
         height: 280,
         fontFamily: 'Tahoma, Arial, sans-serif',
         toolbar: {
@@ -258,18 +258,20 @@ export class EstComentarios implements OnInit {
           },
         },
       },
-      plotOptions: {
-        bar: {
-          columnWidth: '55%',
-          borderRadius: 2,
-        },
-      },
       stroke: {
-        show: true,
-        width: 1,
-        colors: ['transparent'],
+        curve: 'smooth',
+        width: 3,
       },
       colors: ['#0055ea'],
+      markers: {
+        size: categorias.length > 40 ? 0 : 4,
+        colors: ['#0055ea'],
+        strokeColors: '#ffffff',
+        strokeWidth: 2,
+        hover: {
+          size: 6,
+        },
+      },
       dataLabels: {
         enabled: categorias.length <= 15,
         style: {
