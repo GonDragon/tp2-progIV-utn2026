@@ -12,49 +12,49 @@
         <!-- Barra inferior de navegación estilo Barra de Tareas (Taskbar) de Windows XP -->
         <nav class="xp-taskbar layout-nav">
             <ul class="layout-nav-list">
-                <li class="layout-nav-item">
+                <li class="layout-nav-item" appControlRol="anonimo">
                     <a routerLink="/registro"
                        routerLinkActive="active"
                        class="xp-task-button">
                         <span>Registro</span>
                     </a>
                 </li>
-                <li class="layout-nav-item">
+                <li class="layout-nav-item" appControlRol="anonimo">
                     <a routerLink="/login"
                        routerLinkActive="active"
                        class="xp-task-button">
                         <span>Login</span>
                     </a>
                 </li>
-                <li class="layout-nav-item">
+                <li class="layout-nav-item" [appControlRol]="['usuario', 'admin']">
                     <a routerLink="/publicacion"
                        routerLinkActive="active"
                        class="xp-task-button">
                         <span>Nueva Publicación</span>
                     </a>
                 </li>
-                <li class="layout-nav-item">
+                <li class="layout-nav-item" [appControlRol]="['usuario', 'admin']">
                     <a routerLink="/perfil"
                        routerLinkActive="active"
                        class="xp-task-button">
                         <span>Perfil</span>
                     </a>
                 </li>
-                <li class="layout-nav-item">
+                <li class="layout-nav-item" [appControlRol]="['usuario', 'admin']">
                     <a routerLink="/publicaciones"
                        routerLinkActive="active"
                        class="xp-task-button">
                         <span>Publicaciones</span>
                     </a>
                 </li>
-                <li class="layout-nav-item">
+                <li class="layout-nav-item" appControlRol="admin">
                     <a routerLink="/panel-de-control"
                        routerLinkActive="active"
                        class="xp-task-button">
                         <span>Panel de Control</span>
                     </a>
                 </li>
-                <li class="layout-nav-item">
+                <li class="layout-nav-item" [appControlRol]="['usuario', 'admin']">
                     <a routerLink="/login"
                        (click)="logout()"
                        class="xp-task-button xp-task-button-logout">

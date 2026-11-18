@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AutenticacionService } from '../../services/autenticacion';
+import { ControlRol } from '../../directivas/control-rol';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ControlRol],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css'],
 })

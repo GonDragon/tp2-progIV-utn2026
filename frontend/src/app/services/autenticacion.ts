@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Backend } from './backend';
 import { Observable, tap } from 'rxjs';
 import { Notificacion } from './notificacion';
@@ -42,6 +42,10 @@ export class AutenticacionService {
 
   private timerInterval: ReturnType<typeof setInterval> | null = null;
   private ignoradoSesion = false;
+
+  // Signal para cambios de usuario
+  private usuarioState = signal<UsuarioToken | null>(this._getUsuarioActual());
+  readonly usuarioActual = this.usuarioState.asReadonly();
 
   public login(credenciales: LoginPayload): Observable<AuthResponse> {
     return this.backend.post<AuthResponse>('/auth/login', credenciales).pipe(
@@ -91,6 +95,10 @@ export class AutenticacionService {
   }
 
   public getUsuarioActual(): UsuarioToken | null {
+    return this.usuarioState();
+  }
+
+  private _getUsuarioActual(): UsuarioToken | null {
     const token = this.getToken();
     if (!token) return null;
 
@@ -108,7 +116,7 @@ export class AutenticacionService {
         atob(base64)
           .split('')
           .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
+          .join(''),
       );
       return JSON.parse(jsonPayload) as UsuarioToken;
     } catch {
