@@ -11,11 +11,12 @@ import { ImgService } from '../../services/img';
 import { Notificacion } from '../../services/notificacion';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { ControlInput } from '../../directivas/control-input';
 
 @Component({
   selector: 'app-publicacion',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ControlInput],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.css',
   host: {

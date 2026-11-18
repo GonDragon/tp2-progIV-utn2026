@@ -18,11 +18,12 @@ import {
 } from '../../services/publicaciones';
 import { AutenticacionService, UsuarioToken } from '../../services/autenticacion';
 import { CensuraPipe } from '../../pipes/censura-pipe';
+import { ControlInput } from '../../directivas/control-input';
 
 @Component({
   selector: 'app-publicacion',
   standalone: true,
-  imports: [DatePipe, NgIf, NgFor, NgClass, FormsModule, CensuraPipe],
+  imports: [DatePipe, NgIf, NgFor, NgClass, FormsModule, CensuraPipe, ControlInput],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.css',
 })
