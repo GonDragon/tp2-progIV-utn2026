@@ -58,6 +58,10 @@ export class AutenticacionService {
     );
   }
 
+  public validateToken(id: string): Observable<any> {
+    return this.backend.get<any>(`/auth/perfil/${id}`);
+  }
+
   public logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }

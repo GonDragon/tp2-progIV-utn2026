@@ -13,6 +13,11 @@ export class Layout {
   private authService = inject(AutenticacionService);
   private router = inject(Router);
 
+  public esPantallaCarga(): boolean {
+    const url = this.router.url.split('?')[0];
+    return url === '' || url === '/' || url === '/loading';
+  }
+
   public logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

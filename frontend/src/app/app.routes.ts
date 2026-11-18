@@ -3,7 +3,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/publicaciones/publicaciones').then((m) => m.Publicaciones),
+    loadComponent: () => import('./pages/loading/loading').then((m) => m.Loading),
+  },
+  {
+    path: 'loading',
+    loadComponent: () => import('./pages/loading/loading').then((m) => m.Loading),
   },
   {
     path: 'registro',

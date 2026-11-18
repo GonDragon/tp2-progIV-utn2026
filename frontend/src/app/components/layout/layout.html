@@ -1,83 +1,68 @@
-<div class="layout-container">
+<div class="layout-container" [class.layout-loading]="esPantallaCarga()">
 
-    <!-- Banner superior estilo Barra de Título Windows XP -->
-<!--    <header class="xp-titlebar layout-header">-->
-<!--        <div class="xp-titlebar-title">-->
-<!--            <div class="layout-app-icon">-->
-<!--                <span>🐾</span>-->
-<!--            </div>-->
-<!--            <h1 class="layout-app-title">-->
-<!--                Patitas - Red Social-->
-<!--            </h1>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Botones decorativos de ventana &ndash;&gt;-->
-<!--        <div class="xp-window-controls">-->
-<!--            <span class="xp-win-btn xp-win-btn-default">_</span>-->
-<!--            <span class="xp-win-btn xp-win-btn-default">□</span>-->
-<!--            <span class="xp-win-btn xp-win-btn-close">✕</span>-->
-<!--        </div>-->
-<!--    </header>-->
-
-    <!-- Contenido de la página dentro del escritorio / ventana principal -->
-    <main class="layout-main">
-        <!-- El router-outlet renderiza las páginas según la ruta -->
+    @if (esPantallaCarga()) {
         <router-outlet></router-outlet>
-    </main>
+    } @else {
+        <!-- Contenido de la página dentro del escritorio / ventana principal -->
+        <main class="layout-main">
+            <!-- El router-outlet renderiza las páginas según la ruta -->
+            <router-outlet></router-outlet>
+        </main>
 
-    <!-- Barra inferior de navegación estilo Barra de Tareas (Taskbar) de Windows XP -->
-    <nav class="xp-taskbar layout-nav">
-        <ul class="layout-nav-list">
-            <li class="layout-nav-item">
-                <a routerLink="/registro"
-                   routerLinkActive="active"
-                   class="xp-task-button">
-                    <span>Registro</span>
-                </a>
-            </li>
-            <li class="layout-nav-item">
-                <a routerLink="/login"
-                   routerLinkActive="active"
-                   class="xp-task-button">
-                    <span>Login</span>
-                </a>
-            </li>
-            <li class="layout-nav-item">
-                <a routerLink="/publicacion"
-                   routerLinkActive="active"
-                   class="xp-task-button">
-                    <span>Nueva Publicación</span>
-                </a>
-            </li>
-            <li class="layout-nav-item">
-                <a routerLink="/perfil"
-                   routerLinkActive="active"
-                   class="xp-task-button">
-                    <span>Perfil</span>
-                </a>
-            </li>
-            <li class="layout-nav-item">
-                <a routerLink="/publicaciones"
-                   routerLinkActive="active"
-                   class="xp-task-button">
-                    <span>Publicaciones</span>
-                </a>
-            </li>
-            <li class="layout-nav-item">
-                <a routerLink="/panel-de-control"
-                   routerLinkActive="active"
-                   class="xp-task-button">
-                    <span>Panel de Control</span>
-                </a>
-            </li>
-            <li class="layout-nav-item">
-                <a routerLink="/login"
-                   (click)="logout()"
-                   class="xp-task-button xp-task-button-logout">
-                    <span>Logout</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+        <!-- Barra inferior de navegación estilo Barra de Tareas (Taskbar) de Windows XP -->
+        <nav class="xp-taskbar layout-nav">
+            <ul class="layout-nav-list">
+                <li class="layout-nav-item">
+                    <a routerLink="/registro"
+                       routerLinkActive="active"
+                       class="xp-task-button">
+                        <span>Registro</span>
+                    </a>
+                </li>
+                <li class="layout-nav-item">
+                    <a routerLink="/login"
+                       routerLinkActive="active"
+                       class="xp-task-button">
+                        <span>Login</span>
+                    </a>
+                </li>
+                <li class="layout-nav-item">
+                    <a routerLink="/publicacion"
+                       routerLinkActive="active"
+                       class="xp-task-button">
+                        <span>Nueva Publicación</span>
+                    </a>
+                </li>
+                <li class="layout-nav-item">
+                    <a routerLink="/perfil"
+                       routerLinkActive="active"
+                       class="xp-task-button">
+                        <span>Perfil</span>
+                    </a>
+                </li>
+                <li class="layout-nav-item">
+                    <a routerLink="/publicaciones"
+                       routerLinkActive="active"
+                       class="xp-task-button">
+                        <span>Publicaciones</span>
+                    </a>
+                </li>
+                <li class="layout-nav-item">
+                    <a routerLink="/panel-de-control"
+                       routerLinkActive="active"
+                       class="xp-task-button">
+                        <span>Panel de Control</span>
+                    </a>
+                </li>
+                <li class="layout-nav-item">
+                    <a routerLink="/login"
+                       (click)="logout()"
+                       class="xp-task-button xp-task-button-logout">
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
 
 </div>
