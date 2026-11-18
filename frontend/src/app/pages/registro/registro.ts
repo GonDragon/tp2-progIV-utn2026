@@ -11,6 +11,7 @@ import { AutenticacionService } from '../../services/autenticacion';
 import { ImgService } from '../../services/img';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { HintAsistente } from '../../directivas/hint-asistente';
 
 // Validador personalizado para confirmar que las contraseñas coincidan
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -22,7 +23,7 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, HintAsistente],
   templateUrl: './registro.html',
   host: {
     style:

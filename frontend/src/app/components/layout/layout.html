@@ -15,7 +15,8 @@
                 <li class="layout-nav-item" appControlRol="anonimo">
                     <a routerLink="/registro"
                        routerLinkActive="active"
-                       class="xp-task-button">
+                       class="xp-task-button"
+                       appHintAsistente="registro">
                         <span>Registro</span>
                     </a>
                 </li>
@@ -57,7 +58,8 @@
                 <li class="layout-nav-item" [appControlRol]="['usuario', 'admin']">
                     <a routerLink="/login"
                        (click)="logout()"
-                       class="xp-task-button xp-task-button-logout">
+                       class="xp-task-button xp-task-button-logout"
+                       appHintAsistente="logout">
                         <span>Logout</span>
                     </a>
                 </li>

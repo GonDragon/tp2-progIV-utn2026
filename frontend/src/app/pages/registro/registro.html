@@ -77,7 +77,7 @@
                 <!-- Contraseña -->
                 <div>
                     <label for="password" class="registro-label">Contraseña:</label>
-                    <input id="password" type="password" formControlName="password" class="xp-input">
+                    <input id="password" type="password" formControlName="password" class="xp-input" appHintAsistente="contraseña">
                     @if (registroForm.get('password')?.invalid && registroForm.get('password')?.touched) {
                         <div class="xp-error-text">
                             @if (registroForm.get('password')?.hasError('required')) { <p>Es requerida.</p> }
@@ -90,7 +90,7 @@
                 <!-- Repetir Contraseña -->
                 <div>
                     <label for="repetirContrasenia" class="registro-label">Repetir Contraseña:</label>
-                    <input id="repetirContrasenia" type="password" formControlName="repetirContrasenia" class="xp-input">
+                    <input id="repetirContrasenia" type="password" formControlName="repetirContrasenia" class="xp-input" appHintAsistente="contraseña">
                     @if (registroForm.hasError('passwordsMismatch') && registroForm.get('repetirContrasenia')?.touched) {
                         <p class="xp-error-text">Las contraseñas no coinciden.</p>
                     }
@@ -140,7 +140,8 @@
                 <button
                         type="submit"
                         [disabled]="registroForm.invalid || cargando || subiendoImagen"
-                        class="xp-button xp-button-primary xp-button-block">
+                        class="xp-button xp-button-primary xp-button-block"
+                        appHintAsistente="registro">
                     @if (cargando) {
                         <span>Registrando...</span>
                     } @else if (subiendoImagen) {

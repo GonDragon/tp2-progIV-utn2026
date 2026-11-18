@@ -13,11 +13,12 @@ import {
 } from '../../services/autenticacion';
 import { Notificacion } from '../../services/notificacion';
 import { IconoComponent } from '../../components/icono/icono';
+import { HintAsistente } from '../../directivas/hint-asistente';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterLink, IconoComponent],
+  imports: [CommonModule, RouterLink, IconoComponent, HintAsistente],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })

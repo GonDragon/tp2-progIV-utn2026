@@ -80,6 +80,7 @@
               [alt]="usuario.nombre || usuario.username"
               (error)="onImgError()"
               class="perfil-avatar-image"
+              appHintAsistente="imagen-perfil"
             />
             <div
               *ngIf="!usuario.urlFoto || fotoError"

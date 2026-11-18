@@ -3,11 +3,12 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AutenticacionService } from '../../services/autenticacion';
 import { ControlRol } from '../../directivas/control-rol';
 import { Asistente } from '../asistente/asistente';
+import { HintAsistente } from '../../directivas/hint-asistente';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ControlRol, Asistente],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ControlRol, Asistente, HintAsistente],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css'],
 })

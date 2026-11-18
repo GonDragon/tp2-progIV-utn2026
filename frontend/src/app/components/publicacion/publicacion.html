@@ -108,6 +108,7 @@
                       class="comentario-editar-btn"
                       (click)="activarEdicion(com)"
                       title="Editar comentario"
+                      appHintAsistente="editar-comentario"
                     >
                       <span class="comentario-editar-icon">✏️</span>
                       <span>editar</span>
@@ -161,6 +162,7 @@
             class="xp-button nuevo-comentario-btn"
             (click)="enviarComentario()"
             [disabled]="!nuevoComentarioTexto.trim() || enviandoComentario"
+            appHintAsistente="boton-enviar"
           >
             Enviar
           </button>
@@ -170,6 +172,7 @@
             [(ngModel)]="nuevoComentarioTexto"
             placeholder="Escribe un comentario..."
             appControlInput
+            appHintAsistente="campo-comentario"
           ></textarea>
         </div>
       </div>
