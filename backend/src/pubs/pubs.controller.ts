@@ -74,6 +74,7 @@ export class PubsController {
   }
 
   @Get('publicaciones')
+  @UseGuards(AuthGuard)
   async getPublicaciones(@Query() query: any) {
     return await this.pubsService.getPublicaciones(query);
   }
