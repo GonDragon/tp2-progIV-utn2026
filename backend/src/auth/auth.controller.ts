@@ -5,14 +5,13 @@ import {
   Body,
   Param,
   UseGuards,
-  Res,
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { CreateUsuarioDto } from './dto/create-usuario.dto.js';
 import { AuthenticationDto } from './dto/authentication.dto.js';
 import { AuthGuard } from '../guards/auth.guard.js';
-import type { Request, Response } from 'express';
+import type { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -21,20 +20,16 @@ export class AuthController {
   @Post('register')
   async create(
     @Body() createAuthDto: CreateUsuarioDto,
-    @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.register(createAuthDto);
-    this.authService.setTokenCookie(res, result);
     return { token: result };
   }
 
   @Post('login')
   async login(
     @Body() loginAuthDto: AuthenticationDto,
-    @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.login(loginAuthDto);
-    this.authService.setTokenCookie(res, result);
     return { token: result };
   }
 
@@ -50,10 +45,8 @@ export class AuthController {
   async refrescar(
     @Req() req: Request,
     @Body() body: any,
-    @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.refrescar(req, body);
-    this.authService.setTokenCookie(res, result);
     return { token: result };
   }
 

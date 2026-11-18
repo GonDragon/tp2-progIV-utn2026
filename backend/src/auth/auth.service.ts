@@ -8,7 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { CreateUsuarioDto } from './dto/create-usuario.dto.js';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto.js';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { Usuario, UsuarioDocument } from './entities/usuario.entity.js';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -30,25 +30,17 @@ export class AuthService {
     if (body && typeof body.token === 'string' && body.token.trim() !== '') {
       return body.token.trim();
     }
-    const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+    const authHeader =
+      req.headers['authorization'] ||
+      req.headers['Authorization'] ||
+      req.headers['authentication'] ||
+      req.headers['Authentication'];
     if (typeof authHeader === 'string') {
       const parts = authHeader.split(' ');
       if (parts.length === 2 && parts[0].toLowerCase() === 'bearer') {
         return parts[1].trim();
       }
       return authHeader.trim();
-    }
-    if (req.cookies && req.cookies.token) {
-      return req.cookies.token;
-    }
-    if (req.headers['cookie']) {
-      const cookies = (req.headers['cookie'] as string).split(';');
-      for (const cookie of cookies) {
-        const [key, value] = cookie.trim().split('=');
-        if (key === 'token' && value) {
-          return decodeURIComponent(value);
-        }
-      }
     }
     return null;
   }
@@ -160,14 +152,5 @@ export class AuthService {
       rol: usuario.rol || 'usuario',
     };
     return this.jwtService.signAsync(payload, { expiresIn: '31d' });
-  }
-
-  setTokenCookie(res: Response, token: string) {
-    res.cookie('token', token, {
-      httpOnly: true, // para evitar ataques XSS
-      sameSite: 'strict', // para evitar ataques CSRF
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 24 * 31, // un mes
-    });
   }
 }
